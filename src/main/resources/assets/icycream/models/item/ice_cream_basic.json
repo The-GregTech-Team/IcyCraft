@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "icycraft:item/ice_cream_basic"
+        "layer0": "icycream:item/ice_cream_basic"
     }
 }

@@ -36,6 +36,6 @@ public class ModelGenerator {
 
     public static void main(String[] args) throws IOException {
         System.out.println(ModelGenerator.class.getResource("/pack.mcmeta").getFile());
-        generateSimpleItemJson("icycraft", "ice_cream_basic");
+        generateSimpleItemJson("icycream", "ice_cream_basic");
     }
 }
