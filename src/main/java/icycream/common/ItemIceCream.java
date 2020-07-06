@@ -9,7 +9,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.StringUtils;
 import net.minecraft.world.World;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,8 +27,7 @@ public class ItemIceCream extends Item {
     /**
      * 根据nbt(原料配比)获取药水(buff)
      * 存储在ingredients nbt里面
-     * 格式是字符串
-     * ENUM_NAME:amount,ENUM_NAME1:amount1,......
+     * 格式是dict
      * test command:
      * give Dev icycream:ice_cream_basic{"ingredients":{"COCO":20,"MILK":40}} 1
      * @param itemStack
