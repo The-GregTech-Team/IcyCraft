@@ -33,5 +33,14 @@ public class Items {
                 .group(itemGroup)
             ).setRegistryName("icycream", "ice_cream_basic")
         );
+        Item itemIceCreamComplex = new ItemIceCream(
+                new Item.Properties()
+                        .maxStackSize(64)
+                        .food(new Food.Builder().hunger(1).setAlwaysEdible().build())
+                        .group(itemGroup)
+        ).setRegistryName("icycream", "ice_cream_complex");
+        event.getRegistry().register(
+            itemIceCreamComplex
+        );
     }
 }

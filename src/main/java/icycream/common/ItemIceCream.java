@@ -10,6 +10,8 @@ import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -78,5 +80,17 @@ public class ItemIceCream extends Item {
             }
         }
         return itemStack;
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    public int getColor(int tintIndex) {
+        switch (tintIndex) {
+            case 0: return 0x000000;
+            case 1: return 0xFFFFFF;
+            case 2: return 0xFF0000;
+            case 3: return 0x00FF00;
+            case 4: return 0x0000FF;
+            default: return 0xFF00FF;
+        }
     }
 }

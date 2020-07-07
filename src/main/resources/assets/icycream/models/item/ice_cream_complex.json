@@ -1,0 +1,10 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "icycream:item/ice_cream_handle",
+        "layer1": "icycream:item/ice_cream_ball_1",
+        "layer2": "icycream:item/ice_cream_ball_2",
+        "layer3": "icycream:item/ice_cream_ball_3",
+        "layer4": "icycream:item/ice_cream_ball_4"
+    }
+}
