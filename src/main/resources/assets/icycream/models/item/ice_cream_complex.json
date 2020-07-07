@@ -5,6 +5,7 @@
         "layer1": "icycream:item/ice_cream_ball_1",
         "layer2": "icycream:item/ice_cream_ball_2",
         "layer3": "icycream:item/ice_cream_ball_3",
-        "layer4": "icycream:item/ice_cream_ball_4"
+        "layer4": "icycream:item/ice_cream_ball_4",
+        "layer5": "icycream:item/ice_cream_top_edge"
     }
 }

@@ -83,7 +83,7 @@ public class ItemIceCream extends Item {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public int getColor(int tintIndex) {
+    public int getColor(int tintIndex, ItemStack itemStack) {
         switch (tintIndex) {
             case 0: return 0x000000;
             case 1: return 0xFFFFFF;
