@@ -1,5 +1,6 @@
-package icycream.common;
+package icycream.common.registry;
 
+import icycream.common.item.ItemIceCream;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -13,7 +14,11 @@ public class ItemColorRegistryHandler {
     @SubscribeEvent
     public static void itemColors(ColorHandlerEvent.Item event) {
         event.getItemColors().register((a, b) -> {
-            return ((ItemIceCream)ice_cream_complex).getColor(b);
+            if(ice_cream_complex != null) {
+                return ((ItemIceCream)ice_cream_complex).getColor(b, a);
+            } else {
+                return 0xFFFFFF;
+            }
         }, ice_cream_complex);
     }
 }

@@ -1,5 +1,7 @@
-package icycream.common;
+package icycream.common.registry;
 
+import icycream.common.item.ItemIceCream;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.Food;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -13,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 @ObjectHolder("icycream")
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
-public class Items {
+public class ItemRegistryHandler {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final Item ice_cream_basic = null;
     private static ItemGroup itemGroup = new ItemGroup("icyCream") {
@@ -33,14 +35,13 @@ public class Items {
                 .group(itemGroup)
             ).setRegistryName("icycream", "ice_cream_basic")
         );
-        Item itemIceCreamComplex = new ItemIceCream(
-                new Item.Properties()
-                        .maxStackSize(64)
-                        .food(new Food.Builder().hunger(1).setAlwaysEdible().build())
-                        .group(itemGroup)
-        ).setRegistryName("icycream", "ice_cream_complex");
         event.getRegistry().register(
-            itemIceCreamComplex
+                new ItemIceCream(
+                        new Item.Properties()
+                                .maxStackSize(64)
+                                .food(new Food.Builder().hunger(1).setAlwaysEdible().build())
+                                .group(itemGroup)
+                ).setRegistryName("icycream", "ice_cream_complex")
         );
     }
 }

@@ -1,4 +1,4 @@
-package icycream.common;
+package icycream.common.item;
 
 import com.google.common.collect.Lists;
 import net.minecraft.entity.LivingEntity;
@@ -17,21 +17,25 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+
 public class ItemIceCream extends Item {
+
     protected Logger logger = LogManager.getLogger();
+
     private static List empty = Collections.unmodifiableList(Lists.newArrayList());
+
     public ItemIceCream(Properties p_i48487_1_) {
         super(p_i48487_1_);
     }
-
-
 
     /**
      * 根据nbt(原料配比)获取药水(buff)
      * 存储在ingredients nbt里面
      * 格式是dict
      * test command:
-     * give Dev icycream:ice_cream_basic{"ingredients":{"COCO":20,"MILK":40}} 1
+     * give Dev icycream:ice_cream_basic{"maxComponent":4, "ingredients":{"BODY_BROWN":0, "COCO":20,"MILK":40}} 1
+     * give Dev icycream:ice_cream_complex{"maxComponent":6, "ingredients":{"BODY_YELLOW":0, "COCO":20,"MILK":40, "VANILLA":40, "APPLE":80}} 1
      * @param itemStack
      * @return
      */
@@ -53,6 +57,34 @@ public class ItemIceCream extends Item {
                 }
             }
             return effectInstances;
+        }
+    }
+
+    private int getColorFromNBT(int tintIndex, ItemStack itemStack) {
+        CompoundNBT tag = itemStack.getTag();
+        if(tag == null) {
+            return 0xFFFFFF;
+        }
+        CompoundNBT ingredients = tag.getCompound("ingredients");
+        int maxComponentsCount = tag.getInt("maxComponent");
+        if(ingredients == null || ingredients.keySet().isEmpty()) {
+            logger.debug("eating an empty icecream");
+            return 0xFFFFFF;
+        }
+        Set<String> ingredientSet = ingredients.keySet();
+        List<String> ingredientList = Lists.newArrayList(ingredientSet);
+        if(tintIndex < maxComponentsCount) {
+            if(tintIndex >= ingredientSet.size()) {
+                if(ingredientSet.size() > 0) {
+                    return Ingredient.valueOf(ingredientList.get(0)).getColor().getRGB();
+                } else {
+                    return 0xFFFFFF;
+                }
+            } else{
+                return Ingredient.valueOf(ingredientList.get(tintIndex)).getColor().getRGB();
+            }
+        } else {
+            return 0x000000;
         }
     }
 
@@ -84,13 +116,6 @@ public class ItemIceCream extends Item {
 
     @OnlyIn(Dist.CLIENT)
     public int getColor(int tintIndex, ItemStack itemStack) {
-        switch (tintIndex) {
-            case 0: return 0x000000;
-            case 1: return 0xFFFFFF;
-            case 2: return 0xFF0000;
-            case 3: return 0x00FF00;
-            case 4: return 0x0000FF;
-            default: return 0xFF00FF;
-        }
+        return getColorFromNBT(tintIndex, itemStack);
     }
 }
