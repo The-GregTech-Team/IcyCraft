@@ -31,6 +31,7 @@ public class BlockRegistryHandler {
 
     public static void registerBlocksWithItem(Block block, String namespace, String name) {
         Registry.register(Registry.BLOCK, new ResourceLocation(namespace, name), block);
-        Registry.register(Registry.ITEM, new ResourceLocation(namespace, name), new BlockItem(block, new Item.Properties()));
+        BlockItem blockItem = new BlockItem(block, new Item.Properties().maxStackSize(64).group(ItemRegistryHandler.itemGroup));
+        Registry.register(Registry.ITEM, new ResourceLocation(namespace, name), blockItem);
     }
 }

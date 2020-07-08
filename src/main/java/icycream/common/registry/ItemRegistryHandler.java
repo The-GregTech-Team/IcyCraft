@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
 public class ItemRegistryHandler {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final Item ice_cream_basic = null;
-    private static ItemGroup itemGroup = new ItemGroup("icyCream") {
+    public static ItemGroup itemGroup = new ItemGroup("icyCream") {
         @Override
         public ItemStack createIcon() {
             return new ItemStack(ice_cream_basic);
