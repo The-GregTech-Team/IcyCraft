@@ -1,7 +1,7 @@
 package icycream.common.registry;
 
+import icycream.common.item.ItemBucket;
 import icycream.common.item.ItemIceCream;
-import net.minecraft.block.Blocks;
 import net.minecraft.item.Food;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -42,6 +42,11 @@ public class ItemRegistryHandler {
                                 .food(new Food.Builder().hunger(1).setAlwaysEdible().build())
                                 .group(itemGroup)
                 ).setRegistryName("icycream", "ice_cream_complex")
+        );
+        event.getRegistry().register(
+                new ItemBucket(
+                        new Item.Properties().maxStackSize(1).group(itemGroup)
+                ).setRegistryName("icycream", "bucket")
         );
     }
 }

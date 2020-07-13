@@ -1,0 +1,7 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "icycream:item/filled_bucket_body",
+        "layer1": "icycream:item/filled_bucket_liquid"
+    }
+}
