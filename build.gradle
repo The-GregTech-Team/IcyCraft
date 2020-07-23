@@ -91,6 +91,10 @@ dependencies {
 	
     // at runtime, use the full JEI jar
     runtimeOnly fg.deobf("mezz.jei:jei-1.15.2:6.0.2.12")
+
+    // https://mvnrepository.com/artifact/junit/junit
+    testCompile group: 'junit', name: 'junit', version: '4.13'
+
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

@@ -1,16 +1,21 @@
 package icycream.common.fluid;
 
 import com.google.common.collect.Maps;
+import icycream.IcyCream;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.fluid.WaterFluid;
 import net.minecraft.item.Item;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.fluids.FluidAttributes;
 
@@ -31,9 +36,11 @@ public abstract class FluidIngredient extends WaterFluid {
 
     protected String name;
 
-    protected static Map<String, Source> srcs = Maps.newHashMap();
+    protected static Map<String, Source> SRCS = Maps.newHashMap();
 
-    protected static Map<String, Flowing> flowings = Maps.newHashMap();
+    protected static Map<String, Flowing> FLOWINGS = Maps.newHashMap();
+
+    protected static Item FILLED_BUCKET = Registry.ITEM.getOrDefault(new ResourceLocation(IcyCream.MODID, "bucket"));
 
 
 
@@ -57,12 +64,12 @@ public abstract class FluidIngredient extends WaterFluid {
 
     @Override
     public Fluid getFlowingFluid() {
-        return srcs.get(name);
+        return FLOWINGS.get(name);
     }
 
     @Override
     public Fluid getStillFluid() {
-        return flowings.get(name);
+        return SRCS.get(name);
     }
 
     /**
@@ -71,7 +78,7 @@ public abstract class FluidIngredient extends WaterFluid {
      */
     @Override
     public Item getFilledBucket() {
-        return super.getFilledBucket();
+        return FILLED_BUCKET;
     }
 
     @Override
@@ -81,16 +88,16 @@ public abstract class FluidIngredient extends WaterFluid {
 
     @Override
     public BlockState getBlockState(IFluidState state) {
-        return null;
+        return Registry.BLOCK.getOrDefault(new ResourceLocation(IcyCream.MODID, "block_liquid_" + name)).getDefaultState().with(FlowingFluidBlock.LEVEL, Integer.valueOf(getLevelFromState(state)));
     }
 
     public static class Source extends FluidIngredient {
 
         public Source(Color color, String name) {
             this.color = color;
-            this.tag = new FluidTags.Wrapper(new ResourceLocation("icycream", name));
+            this.tag = new FluidTags.Wrapper(new ResourceLocation(IcyCream.MODID, name));
             this.name = name;
-            srcs.put(name, this);
+            SRCS.put(name, this);
         }
 
         @Override
@@ -100,16 +107,22 @@ public abstract class FluidIngredient extends WaterFluid {
 
         @Override
         public int getLevel(IFluidState p_207192_1_) {
-            return p_207192_1_.get(LEVEL_1_8);
+            return 8;
         }
     }
 
     public static class Flowing extends FluidIngredient {
         public Flowing(Color color, String name) {
             this.color = color;
-            this.tag = new FluidTags.Wrapper(new ResourceLocation("icycream", name + "_flowing"));
+            this.tag = new FluidTags.Wrapper(new ResourceLocation(IcyCream.MODID, name + "_flowing"));
             this.name = name;
-            flowings.put(name, this);
+            FLOWINGS.put(name, this);
+        }
+
+        @Override
+        protected void fillStateContainer(StateContainer.Builder<Fluid, IFluidState> builder) {
+            super.fillStateContainer(builder);
+            builder.add(LEVEL_1_8);
         }
 
         @Override
@@ -119,7 +132,7 @@ public abstract class FluidIngredient extends WaterFluid {
 
         @Override
         public int getLevel(IFluidState p_207192_1_) {
-            return 8;
+            return p_207192_1_.get(LEVEL_1_8);
         }
     }
 }

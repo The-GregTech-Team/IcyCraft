@@ -1,6 +1,6 @@
 package icycream.common.registry;
 
-import icycream.common.item.ItemBucket;
+import icycream.IcyCream;
 import icycream.common.item.ItemIceCream;
 import net.minecraft.item.Food;
 import net.minecraft.item.Item;
@@ -13,12 +13,12 @@ import net.minecraftforge.registries.ObjectHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@ObjectHolder("icycream")
+@ObjectHolder(IcyCream.MODID)
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class ItemRegistryHandler {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final Item ice_cream_basic = null;
-    public static ItemGroup itemGroup = new ItemGroup("icyCream") {
+    public static ItemGroup itemGroup = new ItemGroup(IcyCream.MODID) {
         @Override
         public ItemStack createIcon() {
             return new ItemStack(ice_cream_basic);
@@ -33,7 +33,7 @@ public class ItemRegistryHandler {
                 .maxStackSize(64)
                 .food(new Food.Builder().hunger(1).setAlwaysEdible().build())
                 .group(itemGroup)
-            ).setRegistryName("icycream", "ice_cream_basic")
+            ).setRegistryName(IcyCream.MODID, "ice_cream_basic")
         );
         event.getRegistry().register(
                 new ItemIceCream(
@@ -41,12 +41,11 @@ public class ItemRegistryHandler {
                                 .maxStackSize(64)
                                 .food(new Food.Builder().hunger(1).setAlwaysEdible().build())
                                 .group(itemGroup)
-                ).setRegistryName("icycream", "ice_cream_complex")
+                ).setRegistryName(IcyCream.MODID, "ice_cream_complex")
         );
-        event.getRegistry().register(
-                new ItemBucket(
-                        new Item.Properties().maxStackSize(1).group(itemGroup)
-                ).setRegistryName("icycream", "bucket")
-        );
+    }
+
+    private static void registerLiquidBucket() {
+
     }
 }
