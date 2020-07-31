@@ -6,6 +6,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -14,6 +16,7 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.OptionalInt;
@@ -51,6 +54,12 @@ public class BlockMixer extends ContainerBlock {
                     //server only
                     TileEntityMixer tileEntity = (TileEntityMixer) worldIn.getTileEntity(pos);
                     if (tileEntity != null) {
+                        NetworkHooks.openGui((ServerPlayerEntity) player, tileEntity, packetBuffer -> {
+                            packetBuffer.writeBlockPos(tileEntity.getPos());
+                            CompoundNBT compoundNBT = new CompoundNBT();
+                            tileEntity.writeLiquidInfoToCompoundNBT(compoundNBT);
+                            packetBuffer.writeCompoundTag(compoundNBT);
+                        });
                         player.openContainer(tileEntity);
                         return ActionResultType.SUCCESS;
                     } else {

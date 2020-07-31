@@ -1,11 +1,14 @@
 package icycream.common.recipes;
 
 import com.google.common.collect.Lists;
+import icycream.IcyCream;
 import icycream.common.fluid.FluidInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.fluids.FluidStack;
 
 import java.util.Iterator;
@@ -130,12 +133,16 @@ public class MachineRecipe {
             listNBT.add(compoundNBT);
         });
         nbt.put("ingredients", listNBT);
-        CompoundNBT resultitem = new CompoundNBT();
-        itemResult.write(resultitem);
-        nbt.put("itemResult", resultitem);
-        CompoundNBT resultfluid = new CompoundNBT();
-        fluidResult.writeToNBT(resultfluid);
-        nbt.put("fluidResult", resultfluid);
+        if(itemResult != null) {
+            CompoundNBT resultitem = new CompoundNBT();
+            itemResult.write(resultitem);
+            nbt.put("itemResult", resultitem);
+        }
+        if(fluidResult != null) {
+            CompoundNBT resultfluid = new CompoundNBT();
+            fluidResult.writeToNBT(resultfluid);
+            nbt.put("fluidResult", resultfluid);
+        }
         nbt.putInt("processingTicks", processingTicks);
     }
 

@@ -6,6 +6,4 @@ package icycream.common.recipes;
 public interface IMachineProcessor {
 
     MachineRecipe getCurrentRecipe();
-
-    float getProgress();
 }

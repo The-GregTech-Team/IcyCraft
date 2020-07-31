@@ -41,6 +41,8 @@ public interface IFluidInventory {
      */
     FluidStack addFluidAt(int index, FluidStack fluidStack);
 
+    void setFluidAt(int index, FluidStack fluidStack);
+
     /**
      * deserialize
      * @param nbt

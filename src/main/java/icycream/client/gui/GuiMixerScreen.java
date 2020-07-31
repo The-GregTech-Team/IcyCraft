@@ -28,8 +28,8 @@ public class GuiMixerScreen extends ContainerScreen<MixerContainer> {
 
     public GuiMixerScreen(MixerContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
-        this.xSize = 128;
-        this.ySize = 64;
+        this.xSize = 175;
+        this.ySize = 165;
     }
 
     /**
@@ -46,11 +46,17 @@ public class GuiMixerScreen extends ContainerScreen<MixerContainer> {
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
         /**
-         * blit 左上角xy, 材质uv, 材质区域大小，绘图区域大小
-         * 辣鸡mc
-         * nimb
+         以 x y 为起点绘制纹理中以 u v 为起点，长w宽h的矩形
          */
-        blit(i, j, 0, 0, this.xSize, this.ySize, this.xSize, this.ySize);
+        blit(i, j, 0, 0, this.xSize, this.ySize);
+        //176,0 -> 202, 27
+
+        //begin: (77, 28)
+
+        //加工图标左上角(176, 0)
+        //宽 = 202 - 176 = 26
+        float progress = this.container.getProgress();
+        blit(i + 77, j + 28, 176, 0, (int) (26 * progress),27);
     }
 
     @Override
