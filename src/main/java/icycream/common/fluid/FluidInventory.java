@@ -1,26 +1,30 @@
 package icycream.common.fluid;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.templates.FluidTank;
 
-import java.util.Objects;
+import javax.annotation.Nonnull;
 
 public class FluidInventory implements IFluidInventory {
     public static final Joiner joiner = Joiner.on(",");
 
-    private FluidStack[] fluids;
+    private FluidTank[] tanks;
 
     private int capacity;
 
     public FluidInventory(int size, int capacity) {
-        this.fluids = new FluidStack[size];
+        this.tanks = new FluidTank[size];
+        for (int i = 0; i < size; i++) {
+            final FluidTank tank = new FluidTank(capacity);
+            tank.setValidator(stack -> {
+                if (tank.isEmpty()) return true;
+                return tank.getFluid().getRawFluid() == stack.getRawFluid();
+            });
+            tanks[i] = tank;
+        }
         this.capacity = capacity;
     }
 
@@ -30,8 +34,8 @@ public class FluidInventory implements IFluidInventory {
      * @return size
      */
     @Override
-    public int getSize() {
-        return fluids.length;
+    public int getTanks() {
+        return tanks.length;
     }
 
     /**
@@ -42,8 +46,7 @@ public class FluidInventory implements IFluidInventory {
      */
     @Override
     public boolean getSlotEmptyAt(int index) {
-        FluidStack fluid = fluids[index];
-        return fluid != null ? fluid.getAmount() <= 0 : true;
+        return tanks[index].isEmpty();
     }
 
     /**
@@ -52,9 +55,40 @@ public class FluidInventory implements IFluidInventory {
      * @param index
      * @return fluid stack at index
      */
+    @Nonnull
     @Override
-    public FluidStack getFluidStackAt(int index) {
-        return fluids[index] != null ? fluids[index] : new FluidStack(Registry.FLUID.getOrDefault(new ResourceLocation("minecraft","water")), 0);
+    public FluidStack getFluidInTank(int index) {
+        return tanks[index].getFluid();
+    }
+
+    @Override
+    public int getTankCapacity(int tank) {
+        return tanks[tank].getCapacity();
+    }
+
+    @Override
+    public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
+        return tanks[tank].isFluidValid(stack);
+    }
+
+    @Override
+    public int fill(FluidStack resource, FluidAction action) {
+        for (FluidTank tank : tanks) {
+            if (tank.isFluidValid(resource)) return tank.fill(resource, action);
+        }
+        return 0;
+    }
+
+    @Nonnull
+    @Override
+    public FluidStack drain(FluidStack resource, FluidAction action) {
+        return null;
+    }
+
+    @Nonnull
+    @Override
+    public FluidStack drain(int maxDrain, FluidAction action) {
+        return null;
     }
 
     /**
@@ -66,48 +100,21 @@ public class FluidInventory implements IFluidInventory {
      */
     @Override
     public FluidStack drainFluidAt(int index, int mb) {
-        FluidStack fluid = fluids[index];
-        Preconditions.checkNotNull(fluid != null);
-        Fluid innerFluid = fluid.getFluid();
-        int amount = fluid.getAmount();
-        int amountLeft = amount > mb ? amount - mb : 0;
-        int drained = amount > mb ? amount - mb : amount;
-        fluid.setAmount(amountLeft);
-        return new FluidStack(innerFluid, drained);
+        return tanks[index].drain(mb, FluidAction.EXECUTE);
     }
 
     /**
-     * @param index
-     * @param fluidStack
-     * @return fluid stack remaining of input, if no fluid left return 0mb stack
+     * @return how much fluid was filled
      */
     @Override
-    public FluidStack addFluidAt(int index, FluidStack fluidStack) {
-        FluidStack fluid = fluids[index];
-        if(fluid == null) {
-            fluids[index] = new FluidStack(fluidStack.getFluid(), fluidStack.getAmount());
-            fluidStack.setAmount(0);
-        } else {
-            if(fluid.getFluid().getRegistryName().equals(fluidStack.getFluid().getRegistryName()))
-            {
-                int add = fluid.getAmount() + fluidStack.getAmount();
-                int remain = add - capacity;
-                fluid.setAmount(add > capacity ? capacity : add);
-                fluidStack.setAmount(remain > 0 ? remain : 0);
-            } else {
-                if(fluid.isEmpty()) {
-                    fluids[index] = new FluidStack(fluidStack.getFluid(), fluidStack.getAmount());
-                    fluidStack.setAmount(0);
-                }
-            }
-        }
-        return fluidStack;
+    public int addFluidAt(int index, FluidStack fluidStack) {
+        return tanks[index].fill(fluidStack, FluidAction.EXECUTE);
     }
 
     @Override
     public void setFluidAt(int index, FluidStack fluidStack) {
         if(fluidStack != null) {
-            fluids[index] = fluidStack;
+            tanks[index].setFluid(fluidStack);
         }
     }
 
@@ -121,7 +128,7 @@ public class FluidInventory implements IFluidInventory {
        ListNBT listNBT = (ListNBT) nbt.get("fluids");
        if(listNBT != null) {
            for (int i = 0; i < listNBT.size(); i++) {
-               fluids[i] = FluidStack.loadFluidStackFromNBT(listNBT.getCompound(i));
+               tanks[i].readFromNBT(listNBT.getCompound(i));
            }
        }
     }
@@ -135,12 +142,12 @@ public class FluidInventory implements IFluidInventory {
     @Override
     public CompoundNBT writeToNBT(CompoundNBT nbt) {
         ListNBT listNBT = new ListNBT();
-        for (FluidStack fluid : fluids) {
+        for (FluidTank tank : tanks) {
             CompoundNBT compoundNBT = new CompoundNBT();
-            if(fluid != null) {
-                fluid.writeToNBT(compoundNBT);
+            if(tank != null) {
+                tank.writeToNBT(compoundNBT);
             } else {
-                new FluidStack(Fluids.WATER, 0).writeToNBT(compoundNBT);
+                FluidStack.EMPTY.writeToNBT(compoundNBT);
             }
         }
         nbt.put("fluids", listNBT);

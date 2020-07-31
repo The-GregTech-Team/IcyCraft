@@ -1,16 +1,18 @@
 package icycream.common.fluid;
 
-import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 
-public interface IFluidInventory {
+import javax.annotation.Nonnull;
+
+public interface IFluidInventory extends IFluidHandler {
 
     /**
      * get size of inv
      * @return size
      */
-    int getSize();
+    int getTanks();
 
     /**
      * if slot at position is empty
@@ -24,7 +26,8 @@ public interface IFluidInventory {
      * @param index
      * @return fluid stack at index
      */
-    FluidStack getFluidStackAt(int index);
+    @Nonnull
+    FluidStack getFluidInTank(int index);
 
     /**
      * drain x mb fluid from idx
@@ -34,12 +37,9 @@ public interface IFluidInventory {
     FluidStack drainFluidAt(int index, int mb);
 
     /**
-     *
-     * @param index
-     * @param fluidStack
-     * @return fluid stack remaining of input, if no fluid left return 0mb stack
+     * @return how much fluid was filled
      */
-    FluidStack addFluidAt(int index, FluidStack fluidStack);
+    int addFluidAt(int index, FluidStack fluidStack);
 
     void setFluidAt(int index, FluidStack fluidStack);
 

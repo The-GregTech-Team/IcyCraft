@@ -1,12 +1,13 @@
 package icycream.common.tile;
 
-import com.google.common.collect.Lists;
 import icycream.common.fluid.FluidInventory;
 import icycream.common.gui.MixerContainer;
 import icycream.common.gui.ProgressIntArray;
 import icycream.common.recipes.IMachineProcessor;
-import icycream.common.recipes.MachineRecipe;
+import icycream.common.recipes.MixerRecipe;
+import icycream.common.recipes.RecipeTypes;
 import icycream.common.registry.BlockRegistryHandler;
+import icycream.common.util.RecipeManagerHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -21,7 +22,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -38,17 +39,14 @@ import java.util.List;
 /**
  * 搅拌机TE
  */
-public class TileEntityMixer extends TileEntity implements ITickableTileEntity, INamedContainerProvider, IMachineProcessor {
-
-    public static List<MachineRecipe> MIXER_RECIPES = Lists.newArrayList();
-
+public class TileEntityMixer extends TileEntity implements ITickableTileEntity, INamedContainerProvider, IMachineProcessor<MixerRecipe> {
     public static final int TYPE_ITEMSTACK = 0;
 
     public static final int TYPE_FLUIDSTACK = 1;
 
     private Logger logger = LogManager.getLogger(getClass());
 
-    private MachineRecipe currentRecipe;
+    private MixerRecipe currentRecipe;
 
     private ProgressIntArray progress = new ProgressIntArray();
 
@@ -113,8 +111,8 @@ public class TileEntityMixer extends TileEntity implements ITickableTileEntity, 
 
     public void writeLiquidInfoToCompoundNBT(CompoundNBT compoundNBT) {
         ListNBT inputLiquids = new ListNBT();
-        for (int i = 0; i < fluidInventoryInput.getSize(); i++) {
-            FluidStack fluidStackAt = fluidInventoryInput.getFluidStackAt(i);
+        for (int i = 0; i < fluidInventoryInput.getTanks(); i++) {
+            FluidStack fluidStackAt = fluidInventoryInput.getFluidInTank(i);
             if(!fluidStackAt.isEmpty()) {
                 CompoundNBT liquid = new CompoundNBT();
                 liquid.putInt("pos",1);
@@ -125,9 +123,9 @@ public class TileEntityMixer extends TileEntity implements ITickableTileEntity, 
             }
         }
         compoundNBT.put("inputLiquids", inputLiquids);
-        if (!fluidInventoryOutput.getFluidStackAt(0).isEmpty()) {
+        if (!fluidInventoryOutput.getFluidInTank(0).isEmpty()) {
             CompoundNBT outputFluidNBT = new CompoundNBT();
-            fluidInventoryOutput.getFluidStackAt(0).writeToNBT(outputFluidNBT);
+            fluidInventoryOutput.getFluidInTank(0).writeToNBT(outputFluidNBT);
             compoundNBT.put("outputLiquid", outputFluidNBT);
         }
     }
@@ -147,8 +145,8 @@ public class TileEntityMixer extends TileEntity implements ITickableTileEntity, 
     }
 
     protected boolean checkInventoryForRecipe() {
-        for (MachineRecipe mixerRecipe : MIXER_RECIPES) {
-            if(mixerRecipe.canAccept(inventoryItemInput, fluidInventoryInput)) {
+        for (MixerRecipe mixerRecipe : RecipeManagerHelper.getRecipes(RecipeTypes.MIXING, getWorld().getRecipeManager()).values()) {
+            if(mixerRecipe.matches(inventoryItemInput, fluidInventoryInput)) {
                 mixerRecipe.consume(inventoryItemInput, fluidInventoryInput);
                 currentRecipe = mixerRecipe;
                 return true;
@@ -169,7 +167,7 @@ public class TileEntityMixer extends TileEntity implements ITickableTileEntity, 
             }
         }
         fluidInventoryInput.readFromNBT(compound);
-        currentRecipe = MachineRecipe.readFromNBT(compound);
+        currentRecipe = (MixerRecipe) world.getRecipeManager().getRecipe(new ResourceLocation(compound.getString("recipe"))).get();
         progress.set(0, compound.getInt("progress"));
         super.read(compound);
     }
@@ -188,7 +186,7 @@ public class TileEntityMixer extends TileEntity implements ITickableTileEntity, 
         compound.put("items", items);
         fluidInventoryInput.writeToNBT(compound);
         if (currentRecipe != null) {
-            currentRecipe.writeToNBT(compound);
+            compound.putString("recipe", currentRecipe.getId().toString());
             compound.putInt("progress", progress.get(0));
         }
         return super.write(compound);
@@ -200,8 +198,8 @@ public class TileEntityMixer extends TileEntity implements ITickableTileEntity, 
             if (currentRecipe != null) {
                 if (progress.get(0) >= progress.get(1)) {
                     //GT式吞材料
-                    FluidStack fluidResult = currentRecipe.getFluidResult();
-                    ItemStack itemResult = currentRecipe.getItemResult();
+                    FluidStack fluidResult = currentRecipe.outputFluid;
+                    ItemStack itemResult = currentRecipe.output;
                     if (itemResult != null) {
                         ItemStack stackInSlot = inventoryItemOutput.getStackInSlot(0);
                         if (!stackInSlot.isEmpty()) {
@@ -252,7 +250,7 @@ public class TileEntityMixer extends TileEntity implements ITickableTileEntity, 
     }
 
     @Override
-    public MachineRecipe getCurrentRecipe() {
+    public MixerRecipe getCurrentRecipe() {
         return currentRecipe;
     }
 

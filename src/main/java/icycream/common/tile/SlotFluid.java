@@ -1,16 +1,12 @@
 package icycream.common.tile;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import icycream.IcyCream;
-import icycream.common.fluid.FluidInventory;
 import icycream.common.fluid.IFluidInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
@@ -51,12 +47,12 @@ public class SlotFluid {
     }
 
     public FluidStack getFluid() {
-        return inventory.getFluidStackAt(slotNumber);
+        return inventory.getFluidInTank(slotNumber);
     }
 
     public void drawFluid(float parentX, float parentY) {
         //FluidStack fluidStackAt = new FluidStack(Registry.FLUID.getOrDefault(new ResourceLocation(IcyCream.MODID, "fluid_egg")), 1000);
-        FluidStack fluidStackAt = inventory.getFluidStackAt(slotIndex);
+        FluidStack fluidStackAt = inventory.getFluidInTank(slotIndex);
         if(fluidStackAt != null) {
             Fluid fluid = fluidStackAt.getFluid();
             //获取TextureAtlas

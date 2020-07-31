@@ -63,8 +63,8 @@ public class GuiMixerScreen extends ContainerScreen<MixerContainer> {
     protected void renderHoveredToolTip(int mouseX, int mouseY) {
         super.renderHoveredToolTip(mouseX, mouseY);
         if ( hoveredSlotFluid != null && this.minecraft.player.inventory.getItemStack().isEmpty()
-                && hoveredSlotFluid.inventory.getFluidStackAt(hoveredSlotFluid.slotNumber).getAmount() > 0) {
-            this.renderTooltip(hoveredSlotFluid.inventory.getFluidStackAt(hoveredSlotFluid.slotNumber), mouseX, mouseY);
+                && hoveredSlotFluid.inventory.getFluidInTank(hoveredSlotFluid.slotNumber).getAmount() > 0) {
+            this.renderTooltip(hoveredSlotFluid.inventory.getFluidInTank(hoveredSlotFluid.slotNumber), mouseX, mouseY);
         }
     }
 

@@ -1,0 +1,13 @@
+{
+  "type": "icycream:mixing",
+  "ticks": 200,
+  "ingredients": [
+    {
+      "tag": "forge:eggs"
+    }
+  ],
+  "outputFluid": {
+    "fluid": "icycream:fluid_egg",
+    "amount": 100
+  }
+}
