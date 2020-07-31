@@ -22,6 +22,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -29,10 +30,16 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -285,5 +292,15 @@ public class TileEntityMixer extends TileEntity implements ITickableTileEntity, 
 
     public FluidInventory getFluidInventoryOutput() {
         return fluidInventoryOutput;
+    }
+
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side == Direction.UP) return (LazyOptional<T>) LazyOptional.of(() -> new InvWrapper(inventoryItemInput));
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side == Direction.DOWN) return (LazyOptional<T>) LazyOptional.of(() -> new InvWrapper(inventoryItemOutput));
+        if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY  && side == Direction.UP) return (LazyOptional<T>) LazyOptional.of(() -> fluidInventoryInput);
+        if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY  && side == Direction.DOWN) return (LazyOptional<T>) LazyOptional.of(() -> fluidInventoryOutput);
+        return super.getCapability(cap, side);
     }
 }
