@@ -1,10 +1,8 @@
 package icycream.common.block;
 
 import icycream.common.tile.TileEntityMixer;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -19,9 +17,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
-import java.util.OptionalInt;
 
 /**
+ * @author lyt
  * 搅拌鸡蛋，面粉等做蛋筒用
  */
 public class BlockMixer extends ContainerBlock {
@@ -60,7 +58,6 @@ public class BlockMixer extends ContainerBlock {
                             tileEntity.writeLiquidInfoToCompoundNBT(compoundNBT);
                             packetBuffer.writeCompoundTag(compoundNBT);
                         });
-                        player.openContainer(tileEntity);
                         return ActionResultType.SUCCESS;
                     } else {
                         return ActionResultType.FAIL;

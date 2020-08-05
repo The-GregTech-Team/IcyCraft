@@ -2,6 +2,7 @@ package icycream.common.registry;
 
 import icycream.IcyCream;
 import icycream.common.item.ItemIceCream;
+import icycream.common.util.RecipeManagerHelper;
 import net.minecraft.item.Food;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -13,6 +14,9 @@ import net.minecraftforge.registries.ObjectHolder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * @author lyt
+ */
 @ObjectHolder(IcyCream.MODID)
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class ItemRegistryHandler {
@@ -24,16 +28,17 @@ public class ItemRegistryHandler {
             return new ItemStack(ice_cream_basic);
         }
     };
+
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
         LOGGER.info("registering items");
         event.getRegistry().register(
-        new ItemIceCream(
-                new Item.Properties()
-                .maxStackSize(64)
-                .food(new Food.Builder().hunger(1).setAlwaysEdible().build())
-                .group(itemGroup)
-            ).setRegistryName(IcyCream.MODID, "ice_cream_basic")
+                new ItemIceCream(
+                        new Item.Properties()
+                                .maxStackSize(64)
+                                .food(new Food.Builder().hunger(1).setAlwaysEdible().build())
+                                .group(itemGroup)
+                ).setRegistryName(IcyCream.MODID, "ice_cream_basic")
         );
         event.getRegistry().register(
                 new ItemIceCream(
@@ -43,6 +48,7 @@ public class ItemRegistryHandler {
                                 .group(itemGroup)
                 ).setRegistryName(IcyCream.MODID, "ice_cream_complex")
         );
+        RecipeManagerHelper.loadRecipes();
     }
 
     private static void registerLiquidBucket() {

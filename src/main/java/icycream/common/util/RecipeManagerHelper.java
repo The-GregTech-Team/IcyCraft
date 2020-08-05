@@ -1,5 +1,6 @@
 package icycream.common.util;
 
+import icycream.common.recipes.ShapelessFluidRecipeSerializer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
@@ -13,16 +14,20 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * @author lyt
+ */
 public class RecipeManagerHelper {
     public static MethodHandle getRecipesMethodHandle = null;
 
-    static {
+    public static void loadRecipes() {
         Method method = ObfuscationReflectionHelper.findMethod(RecipeManager.class, "func_215366_a", IRecipeType.class);
         try {
             getRecipesMethodHandle = MethodHandles.lookup().unreflect(method);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+        ShapelessFluidRecipeSerializer.register();
     }
 
     public static <C extends IInventory, T extends IRecipe<C>> Map<ResourceLocation, T> getRecipes(IRecipeType<T> recipeTypeIn, RecipeManager recipeManager) {

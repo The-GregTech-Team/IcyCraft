@@ -18,12 +18,24 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Takakura-Anri
+ */
 public class ShapelessFluidRecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<ShapelessFluidRecipe> {
-    public static final ShapelessFluidRecipeSerializer INSTANCE = new ShapelessFluidRecipeSerializer("shapeless_fluid_recipe");
-    public static final ShapelessFluidRecipeSerializer MIXING = new ShapelessFluidRecipeSerializer("mixing");
-    public static final ShapelessFluidRecipeSerializer EXTRACTING = new ShapelessFluidRecipeSerializer("extracting");
-    public static final ShapelessFluidRecipeSerializer MACERATING = new ShapelessFluidRecipeSerializer("macerating");
-    public static final ShapelessFluidRecipeSerializer FREEZING = new ShapelessFluidRecipeSerializer("freezing");
+    public static ShapelessFluidRecipeSerializer INSTANCE;
+    public static ShapelessFluidRecipeSerializer MIXING;
+    public static ShapelessFluidRecipeSerializer EXTRACTING;
+    public static ShapelessFluidRecipeSerializer MACERATING;
+    public static ShapelessFluidRecipeSerializer FREEZING;
+
+    public static void register() {
+        INSTANCE = new ShapelessFluidRecipeSerializer("shapeless_fluid_recipe");
+        MIXING = new ShapelessFluidRecipeSerializer("mixing");
+        EXTRACTING = new ShapelessFluidRecipeSerializer("extracting");
+        MACERATING = new ShapelessFluidRecipeSerializer("macerating");
+        FREEZING = new ShapelessFluidRecipeSerializer("freezing");
+
+    }
 
     public ShapelessFluidRecipeSerializer(String name) {
         setRegistryName(IcyCream.MODID, name);
@@ -51,7 +63,19 @@ public class ShapelessFluidRecipeSerializer extends ForgeRegistryEntry<IRecipeSe
         if (json.has("outputFluid"))
             outputFluid = FluidStackSerializer.getFluidStack(json.getAsJsonObject("outputFluid"));
         int ticks = json.get("ticks").getAsInt();
-        return new ShapelessFluidRecipe(recipeId, ingredients, fluidStacks, output, outputFluid, ticks);
+
+        switch (json.get("type").getAsString()) {
+            case "icycream:mixing":
+                return new MixerRecipe(recipeId, ingredients, fluidStacks, output, outputFluid, ticks);
+            case "icycream:freezing":
+                return new RefrigeratorRecipe(recipeId, ingredients, fluidStacks, output, outputFluid, ticks);
+            case "icycream:extracting":
+                return new ExtractorRecipe(recipeId, ingredients, fluidStacks, output, outputFluid, ticks);
+            case "icycream:macerating":
+                return new MaceratorRecipe(recipeId, ingredients, fluidStacks, output, outputFluid, ticks);
+            default:
+                return new ShapelessFluidRecipe(recipeId, ingredients, fluidStacks, output, outputFluid, ticks);
+        }
     }
 
     @Nullable

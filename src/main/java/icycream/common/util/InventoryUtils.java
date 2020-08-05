@@ -1,5 +1,6 @@
 package icycream.common.util;
 
+import com.google.common.collect.Lists;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -8,13 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+/**
+ * @author Takakura-Anri
+ */
 public class InventoryUtils {
     public static List<ItemStack> toList(IInventory inventory) {
-        List<ItemStack> list = new ArrayList<>(inventory.getSizeInventory());
+        List<ItemStack> itemStackList = Lists.newArrayList();
         for (int i = 0; i < inventory.getSizeInventory(); i++) {
-            list.set(i, inventory.getStackInSlot(i));
+            if (!inventory.getStackInSlot(i).isEmpty()) {
+                itemStackList.add(inventory.getStackInSlot(i));
+            }
         }
-        return list;
+        return itemStackList;
     }
 
     public static ListIterator<ItemStack> toIterator(IInventory inventory) {

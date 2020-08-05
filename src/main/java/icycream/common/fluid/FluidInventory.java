@@ -1,6 +1,5 @@
 package icycream.common.fluid;
 
-import com.google.common.base.Joiner;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraftforge.fluids.FluidStack;
@@ -8,8 +7,10 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 
 import javax.annotation.Nonnull;
 
+/**
+ * @author lyt, Takakura-Anri
+ */
 public class FluidInventory implements IFluidInventory {
-    public static final Joiner joiner = Joiner.on(",");
 
     private FluidTank[] tanks;
 
@@ -125,12 +126,12 @@ public class FluidInventory implements IFluidInventory {
      */
     @Override
     public void readFromNBT(CompoundNBT nbt) {
-       ListNBT listNBT = (ListNBT) nbt.get("fluids");
-       if(listNBT != null) {
-           for (int i = 0; i < listNBT.size(); i++) {
-               tanks[i].readFromNBT(listNBT.getCompound(i));
-           }
-       }
+        ListNBT listNBT = (ListNBT) nbt.get("fluids");
+        if(listNBT != null) {
+            for (int i = 0; i < listNBT.size(); i++) {
+                tanks[i].readFromNBT(listNBT.getCompound(i));
+            }
+        }
     }
 
     /**
