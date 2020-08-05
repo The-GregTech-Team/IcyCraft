@@ -44,13 +44,8 @@ public class TileEntityMixer extends AbstractTileEntityMachine {
     }
 
     public TileEntityMixer(World world) {
-        this(BlockRegistryHandler.mixer);
+        this();
         this.world = world;
-    }
-
-
-    public TileEntityMixer(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
     }
 
     @Nullable

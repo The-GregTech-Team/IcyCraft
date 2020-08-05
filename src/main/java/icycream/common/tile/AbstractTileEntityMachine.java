@@ -1,10 +1,12 @@
 package icycream.common.tile;
 
+import icycream.common.block.BlockMachine;
 import icycream.common.fluid.FluidInventory;
 import icycream.common.gui.ProgressIntArray;
 import icycream.common.recipes.ShapelessFluidRecipe;
 import icycream.common.registry.ServerHandler;
 import icycream.common.util.RecipeManagerHelper;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.INamedContainerProvider;
@@ -14,6 +16,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -130,6 +133,8 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
                 shapelessFluidRecipe.consume(inventoryItemInput, fluidInventoryInput);
                 currentRecipe = shapelessFluidRecipe;
                 progress.set(1, currentRecipe.ticks);
+                BlockState blockState = world.getBlockState(pos);
+                world.setBlockState(pos, blockState.with(BlockMachine.STATE, 1));
                 return true;
             }
         }
@@ -199,6 +204,8 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
                     }
                     if (!checkInventoryForRecipe()) {
                         currentRecipe = null;
+                        BlockState blockState = world.getBlockState(pos);
+                        world.setBlockState(pos, blockState.with(BlockMachine.STATE, 0));
                     }
                     progress.set(0, 0);
                     sync();
