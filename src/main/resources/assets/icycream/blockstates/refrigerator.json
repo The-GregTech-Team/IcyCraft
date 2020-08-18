@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "templevel=0": {
+      "model": "icycream:block/refrigerator_0"
+    },
+    "templevel=1": {
+      "model": "icycream:block/refrigerator_1"
+    },
+    "templevel=2": {
+      "model": "icycream:block/refrigerator_2"
+    },
+    "templevel=3": {
+      "model": "icycream:block/refrigerator_3"
+    }
+  }
+}

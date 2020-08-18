@@ -33,8 +33,14 @@ public class TileEntityMixer extends AbstractTileEntityMachine {
              */
             @Override
             public void setInventorySlotContents(int index, ItemStack stack) {
+                /**
+                 * world is null on loading phase
+                 */
                 super.setInventorySlotContents(index, stack);
-                checkInventoryForRecipe();
+                if(currentRecipe == null && world != null) {
+                    checkInventoryForRecipe();
+                }
+                //markDirty();
             }
         };
         this.inventoryItemOutput = new Inventory(1);
@@ -51,7 +57,7 @@ public class TileEntityMixer extends AbstractTileEntityMachine {
     @Nullable
     @Override
     public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player) {
-        return new MixerContainer(id, playerInventory, getPos(), world, progress);
+        return new MixerContainer(id, playerInventory, pos, world, progress);
     }
 
     @Override

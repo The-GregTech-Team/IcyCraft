@@ -1,12 +1,18 @@
 package icycream.client.gui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import icycream.IcyCream;
 import icycream.common.gui.AbstractMachineContainer;
+import icycream.common.gui.RefrigeratorContainer;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
-public class GuiRefrigeratorScreen extends AbstractGuiMachineScreen {
-    public GuiRefrigeratorScreen(AbstractMachineContainer screenContainer, PlayerInventory inv, ITextComponent titleIn, int xSize, int ySize) {
-        super(screenContainer, inv, titleIn, xSize, ySize);
+public class GuiRefrigeratorScreen extends AbstractGuiMachineScreen<RefrigeratorContainer> {
+    public static final ResourceLocation GUI_BACKGROUND = new ResourceLocation(IcyCream.MODID, "textures/gui/refrigerator_gui.png");
+
+    public GuiRefrigeratorScreen(RefrigeratorContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+        super(screenContainer, inv, titleIn, 175, 165);
     }
 
     /**
@@ -18,6 +24,13 @@ public class GuiRefrigeratorScreen extends AbstractGuiMachineScreen {
      */
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        this.minecraft.getTextureManager().bindTexture(GUI_BACKGROUND);
+        int i = (this.width - this.xSize) / 2;
+        int j = (this.height - this.ySize) / 2;
+        /**
+         以 x y 为起点绘制纹理中以 u v 为起点，长w宽h的矩形
+         */
+        blit(i, j, 0, 0, this.xSize, this.ySize);
     }
 }

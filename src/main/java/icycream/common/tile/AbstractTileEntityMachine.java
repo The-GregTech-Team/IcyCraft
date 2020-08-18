@@ -16,7 +16,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -42,18 +41,25 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
 
     protected Logger logger = LogManager.getLogger(getClass());
 
+    @Nullable
     protected ShapelessFluidRecipe currentRecipe;
 
+    @Nonnull
     protected ProgressIntArray progress = new ProgressIntArray();
 
+    @Nonnull
     protected Inventory inventoryItemInput;
 
+    @Nonnull
     protected Inventory inventoryItemOutput;
 
+    @Nonnull
     protected FluidInventory fluidInventoryInput;
 
+    @Nonnull
     protected FluidInventory fluidInventoryOutput;
 
+    @Nonnull
     protected IRecipeType<? extends ShapelessFluidRecipe> recipeType;
 
     public AbstractTileEntityMachine(TileEntityType<?> tileEntityTypeIn) {
@@ -104,11 +110,14 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
             }
         }
         compoundNBT.put("inputLiquids", inputLiquids);
-        if (!fluidInventoryOutput.getFluidInTank(0).isEmpty()) {
+
+
+        if (fluidInventoryOutput.getTanks() > 0 && !fluidInventoryOutput.getFluidInTank(0).isEmpty()) {
             CompoundNBT outputFluidNBT = new CompoundNBT();
             fluidInventoryOutput.getFluidInTank(0).writeToNBT(outputFluidNBT);
             compoundNBT.put("outputLiquid", outputFluidNBT);
         }
+
     }
 
     public void readLiquidFromCompoundNBT(CompoundNBT nbtCompound) {
@@ -133,8 +142,7 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
                 shapelessFluidRecipe.consume(inventoryItemInput, fluidInventoryInput);
                 currentRecipe = shapelessFluidRecipe;
                 progress.set(1, currentRecipe.ticks);
-                BlockState blockState = world.getBlockState(pos);
-                world.setBlockState(pos, blockState.with(BlockMachine.STATE, 1));
+                updateWorkBlockState(pos);
                 return true;
             }
         }
@@ -170,7 +178,9 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
             items.add(compoundNBT);
         }
         compound.put("items", items);
+
         writeLiquidInfoToCompoundNBT(compound);
+
         if (currentRecipe != null) {
             compound.putString("recipe", currentRecipe.getId().toString());
             compound.putInt("progress", progress.get(0));
@@ -204,15 +214,13 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
                     }
                     if (!checkInventoryForRecipe()) {
                         currentRecipe = null;
-                        BlockState blockState = world.getBlockState(pos);
-                        world.setBlockState(pos, blockState.with(BlockMachine.STATE, 0));
+                        updateWorkBlockState(pos);
                     }
                     progress.set(0, 0);
                     sync();
                 } else {
                     progress.set(0, progress.get(0) + 1);
                     sync();
-                    logger.info("progress = {}%", progress.get(0) / (progress.get(1) * 1.0) * 100);
                 }
             }
         }
@@ -263,5 +271,29 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
         if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && side == Direction.DOWN)
             return (LazyOptional<T>) LazyOptional.of(() -> fluidInventoryOutput);
         return super.getCapability(cap, side);
+    }
+
+    /**
+     * 根据机器当前状态决定blockstate
+     *
+     * @param state
+     * @return
+     */
+    protected BlockState getNewBlockState(BlockState state) {
+        int comparable = (Integer) state.getValues().get(BlockMachine.STATE_RUNNING);
+        if (comparable == 0) {
+            comparable = 1;
+        } else {
+            comparable = 0;
+        }
+        return state.with(BlockMachine.STATE_RUNNING, comparable);
+    }
+
+    /**
+     * 目前mod机器只使用int state
+     */
+    protected void updateWorkBlockState(BlockPos pos) {
+        BlockState blockState = world.getBlockState(pos);
+        world.setBlockState(pos, getNewBlockState(blockState));
     }
 }

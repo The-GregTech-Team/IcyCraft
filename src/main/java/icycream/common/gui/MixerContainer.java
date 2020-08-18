@@ -4,8 +4,11 @@ import icycream.common.tile.SlotFluid;
 import icycream.common.tile.SlotInput;
 import icycream.common.tile.SlotOutput;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.IIntArray;
@@ -31,6 +34,33 @@ public class MixerContainer extends AbstractMachineContainer {
 
     public MixerContainer(int id, PlayerInventory playerInventory, BlockPos pos, World world, IIntArray progressIntArray) {
         super(id, playerInventory, type, pos, world, progressIntArray);
+    }
+
+    /**
+     * Handle when the stack in slot {@code index} is shift-clicked. Normally this moves the stack between the player
+     * inventory and the other inventory(s).
+     *
+     * @param playerIn
+     * @param index
+     */
+    @Override
+    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+        Slot slot = this.inventorySlots.get(index);
+        if (slot != null && slot.getHasStack()) {
+            ItemStack stack = slot.getStack().copy();
+            if(index < 36) {
+                mergeItemStack(stack, 36, 37, true);
+            } else {
+                mergeItemStack(stack, 0, 35, true);
+            }
+            slot.putStack(stack);
+            if(!stack.isEmpty()) {
+                slot.onSlotChanged();
+            }
+            return stack;
+        } else {
+            return ItemStack.EMPTY;
+        }
     }
 
     @Override

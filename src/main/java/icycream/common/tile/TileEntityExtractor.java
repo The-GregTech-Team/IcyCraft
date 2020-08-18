@@ -18,11 +18,6 @@ public class TileEntityExtractor extends AbstractTileEntityMachine
     }
 
     @Override
-    public void tick() {
-
-    }
-
-    @Override
     public ITextComponent getDisplayName() {
         return null;
     }
