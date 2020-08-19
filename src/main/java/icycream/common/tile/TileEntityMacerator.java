@@ -1,32 +1,23 @@
 package icycream.common.tile;
 
 import icycream.common.gui.MaceratorContainer;
-import icycream.common.gui.MixerContainer;
 import icycream.common.recipes.RecipeTypes;
 import icycream.common.registry.BlockRegistryHandler;
-import net.minecraft.client.renderer.texture.ITickable;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-/**
- * @author lyt
- * 磨粉机TE
- */
 public class TileEntityMacerator  extends AbstractTileEntityMachine {
     public TileEntityMacerator() {
         super(BlockRegistryHandler.macerator);
-        this.inventoryItemInput = this.inventoryItemInput = new Inventory(1) {
+        this.inventoryItemInput = new Inventory(1) {
             /**
              * Sets the given item stack to the specified slot in the inventory (can be crafting or armor sections).
              *
@@ -35,14 +26,8 @@ public class TileEntityMacerator  extends AbstractTileEntityMachine {
              */
             @Override
             public void setInventorySlotContents(int index, ItemStack stack) {
-                /**
-                 * world is null on loading phase
-                 */
                 super.setInventorySlotContents(index, stack);
-                if(currentRecipe == null && world != null) {
-                    checkInventoryForRecipe();
-                }
-                //markDirty();
+                checkInventoryForRecipe();
             }
         };
         this.inventoryItemOutput = new Inventory(1);
@@ -61,7 +46,7 @@ public class TileEntityMacerator  extends AbstractTileEntityMachine {
 
     @Nullable
     @Override
-    public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        return new MaceratorContainer(id, playerInventory, pos, world, progress);
+    public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player) {
+        return new MaceratorContainer(id, playerInventory, getPos(), world, progress);
     }
 }

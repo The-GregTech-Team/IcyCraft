@@ -1,12 +1,9 @@
 package icycream.common.tile;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
 import icycream.common.fluid.FluidInventory;
 import icycream.common.gui.RefrigeratorContainer;
 import icycream.common.gui.ScalableIntArray;
-import icycream.common.recipes.RefrigeratorRecipe;
+import icycream.common.recipes.RecipeTypes;
 import icycream.common.recipes.ShapelessFluidRecipe;
 import icycream.common.registry.BlockRegistryHandler;
 import icycream.common.registry.ServerHandler;
@@ -23,8 +20,6 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 冰箱TE
@@ -80,6 +75,7 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
         this.inventoryItemOutput = new Inventory(0);
         this.fluidInventoryInput = new FluidInventory(0, 8000);
         this.fluidInventoryOutput = new FluidInventory(0, 8000);
+        this.recipeType = RecipeTypes.FREEZING;
     }
 
     public TileEntityRefrigerator(IBlockReader world) {

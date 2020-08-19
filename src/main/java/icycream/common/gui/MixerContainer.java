@@ -22,18 +22,18 @@ import net.minecraftforge.common.extensions.IForgeContainerType;
  */
 public class MixerContainer extends AbstractMachineContainer {
 
-    public static ContainerType<MixerContainer> type = (ContainerType<MixerContainer>) IForgeContainerType.create(
+    public static final ContainerType<MixerContainer> TYPE = (ContainerType<MixerContainer>) IForgeContainerType.create(
             (int windowId, PlayerInventory inv, PacketBuffer data)
                     -> new MixerContainer(windowId, inv, data.readBlockPos(), Minecraft.getInstance().world.getWorld(), new ProgressIntArray(), data.readCompoundTag()))
             .setRegistryName("mixer_container");
 
 
     public MixerContainer(int id, PlayerInventory playerInventory, BlockPos pos, World world, IIntArray progressIntArray, CompoundNBT liquidTag) {
-        super(id, playerInventory, type, pos, world, progressIntArray, liquidTag);
+        super(id, playerInventory, TYPE, pos, world, progressIntArray, liquidTag);
     }
 
     public MixerContainer(int id, PlayerInventory playerInventory, BlockPos pos, World world, IIntArray progressIntArray) {
-        super(id, playerInventory, type, pos, world, progressIntArray);
+        super(id, playerInventory, TYPE, pos, world, progressIntArray);
     }
 
     /**

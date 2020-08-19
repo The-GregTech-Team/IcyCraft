@@ -1,20 +1,39 @@
 package icycream.common.tile;
 
-import net.minecraft.client.renderer.texture.ITickable;
+import icycream.common.fluid.FluidInventory;
+import icycream.common.gui.ExtractorContainer;
+import icycream.common.recipes.RecipeTypes;
+import icycream.common.registry.BlockRegistryHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
 public class TileEntityExtractor extends AbstractTileEntityMachine
 {
-    public TileEntityExtractor(TileEntityType<?> tileEntityTypeIn) {
-        super(tileEntityTypeIn);
+    public TileEntityExtractor() {
+        super(BlockRegistryHandler.extracter);
+        this.inventoryItemInput = new Inventory(1) {
+            @Override
+            public void setInventorySlotContents(int index, ItemStack stack) {
+                super.setInventorySlotContents(index, stack);
+                checkInventoryForRecipe();
+            }
+        };
+        this.inventoryItemOutput = new Inventory(1);
+        this.fluidInventoryInput = new FluidInventory(2, 8000);
+        this.fluidInventoryOutput = new FluidInventory(1, 8000);
+        this.recipeType = RecipeTypes.EXTRACTING;
+    }
+
+    public TileEntityExtractor(World world) {
+        this();
+        this.world = world;
     }
 
     @Override
@@ -24,7 +43,7 @@ public class TileEntityExtractor extends AbstractTileEntityMachine
 
     @Nullable
     @Override
-    public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
-        return null;
+    public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player) {
+        return new ExtractorContainer(id, playerInventory, getPos(), world, progress);
     }
 }

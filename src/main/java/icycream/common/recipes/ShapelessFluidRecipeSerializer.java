@@ -59,7 +59,7 @@ public class ShapelessFluidRecipeSerializer extends ForgeRegistryEntry<IRecipeSe
         if (json.has("result"))
             output = CraftingHelper.getItemStack(json.getAsJsonObject("result"), false);
 
-        FluidStack outputFluid = null;
+        FluidStack outputFluid = FluidStack.EMPTY;
         if (json.has("outputFluid"))
             outputFluid = FluidStackSerializer.getFluidStack(json.getAsJsonObject("outputFluid"));
         int ticks = json.get("ticks").getAsInt();

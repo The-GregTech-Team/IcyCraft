@@ -6,7 +6,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.math.BlockPos;
@@ -19,13 +18,13 @@ import net.minecraftforge.common.extensions.IForgeContainerType;
  */
 public class RefrigeratorContainer extends AbstractMachineContainer {
 
-    public static ContainerType<RefrigeratorContainer> type = (ContainerType<RefrigeratorContainer>) IForgeContainerType.create(
+    public static final ContainerType<RefrigeratorContainer> TYPE = (ContainerType<RefrigeratorContainer>) IForgeContainerType.create(
             (int windowId, PlayerInventory inv, PacketBuffer data)
                     -> new RefrigeratorContainer(windowId, inv, data.readBlockPos(), Minecraft.getInstance().world.getWorld(), new ProgressIntArray()))
             .setRegistryName("refrigerator_container");
 
     public RefrigeratorContainer(int id, PlayerInventory playerInventory, BlockPos pos, World world, IIntArray progressIntArray) {
-        super(id, playerInventory, type, pos, world, progressIntArray);
+        super(id, playerInventory, TYPE, pos, world, progressIntArray);
     }
 
     /**
