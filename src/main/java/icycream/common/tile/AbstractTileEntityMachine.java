@@ -20,6 +20,7 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.IIntArray;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -44,18 +45,33 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
     @Nullable
     protected ShapelessFluidRecipe currentRecipe;
 
+    /**
+     * 不能是null，用于表示机器进度，温度，高度等数据
+     */
     @Nonnull
-    protected ProgressIntArray progress = new ProgressIntArray();
+    protected IIntArray progress;
 
+    /**
+     * 不能是null，如果不想用请给个0长度的
+     */
     @Nonnull
     protected Inventory inventoryItemInput;
 
+    /**
+     * 不能是null，如果不想用请给个0长度的
+     */
     @Nonnull
     protected Inventory inventoryItemOutput;
 
+    /**
+     * 不能是null，如果不想用请给个0长度的
+     */
     @Nonnull
     protected FluidInventory fluidInventoryInput;
 
+    /**
+     * 不能是null，如果不想用请给个0长度的
+     */
     @Nonnull
     protected FluidInventory fluidInventoryOutput;
 

@@ -10,6 +10,9 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import java.util.List;
 
+/**
+ * 冰箱的配方，特点：仅仅处理一个格子，处理完毕前不会消耗物品，物品处理时间随着物品的数量而增加
+ */
 public class RefrigeratorRecipe extends ShapelessFluidRecipe {
     public RefrigeratorRecipe(ResourceLocation id, List<Ingredient> ingredients, List<FluidStack> fluidInputs, @Nonnull ItemStack output, FluidStack outputFluid, int ticks) {
         super(id, ingredients, fluidInputs, output, outputFluid, ticks);
