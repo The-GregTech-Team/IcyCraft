@@ -2,6 +2,7 @@ package icycream.common.tile;
 
 import icycream.common.fluid.FluidInventory;
 import icycream.common.gui.RefrigeratorContainer;
+import icycream.common.recipes.RecipeTypes;
 import icycream.common.registry.BlockRegistryHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -41,6 +42,7 @@ public class TileEntityRefrigerator  extends AbstractTileEntityMachine {
         this.inventoryItemOutput = new Inventory(0);
         this.fluidInventoryInput = new FluidInventory(0, 8000);
         this.fluidInventoryOutput = new FluidInventory(0, 8000);
+        this.recipeType = RecipeTypes.FREEZING;
     }
 
     public TileEntityRefrigerator(IBlockReader world) {
