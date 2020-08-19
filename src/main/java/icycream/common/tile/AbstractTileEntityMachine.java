@@ -28,7 +28,9 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,10 +55,10 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
     @Nonnull
     protected Inventory inventoryItemOutput;
 
-    @Nonnull
+    @Nullable
     protected FluidInventory fluidInventoryInput;
 
-    @Nonnull
+    @Nullable
     protected FluidInventory fluidInventoryOutput;
 
     @Nonnull
@@ -71,7 +73,7 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
      * Retrieves packet to send to the client whenever this Tile Entity is resynced via World.notifyBlockUpdate. For
      * modded TE's, this packet comes back to you clientside in {@link #onDataPacket}
      */
-    @Nullable
+    @Nonnull
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
         CompoundNBT compoundNBT = new CompoundNBT();
@@ -97,36 +99,38 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
     }
 
     public void writeLiquidInfoToCompoundNBT(CompoundNBT compoundNBT) {
-        ListNBT inputLiquids = new ListNBT();
-        for (int i = 0; i < fluidInventoryInput.getTanks(); i++) {
-            FluidStack fluidStackAt = fluidInventoryInput.getFluidInTank(i);
-            if (!fluidStackAt.isEmpty()) {
-                CompoundNBT liquid = new CompoundNBT();
-                liquid.putInt("pos", 1);
-                CompoundNBT n = new CompoundNBT();
-                fluidStackAt.writeToNBT(n);
-                liquid.put("liquid", n);
-                inputLiquids.add(liquid);
+        if (fluidInventoryInput != null) {
+            ListNBT inputLiquids = new ListNBT();
+            for (int i = 0; i < fluidInventoryInput.getTanks(); i++) {
+                FluidStack fluidStackAt = fluidInventoryInput.getFluidInTank(i);
+                if (!fluidStackAt.isEmpty()) {
+                    CompoundNBT liquid = new CompoundNBT();
+                    liquid.putInt("pos", 1);
+                    CompoundNBT n = new CompoundNBT();
+                    fluidStackAt.writeToNBT(n);
+                    liquid.put("liquid", n);
+                    inputLiquids.add(liquid);
+                }
             }
+            compoundNBT.put("inputLiquids", inputLiquids);
         }
-        compoundNBT.put("inputLiquids", inputLiquids);
 
 
-        if (fluidInventoryOutput.getTanks() > 0 && !fluidInventoryOutput.getFluidInTank(0).isEmpty()) {
+        if (fluidInventoryOutput != null && fluidInventoryOutput.getTanks() > 0 && !fluidInventoryOutput.getFluidInTank(0).isEmpty()) {
             CompoundNBT outputFluidNBT = new CompoundNBT();
             fluidInventoryOutput.getFluidInTank(0).writeToNBT(outputFluidNBT);
             compoundNBT.put("outputLiquid", outputFluidNBT);
         }
-
     }
 
     public void readLiquidFromCompoundNBT(CompoundNBT nbtCompound) {
-        CompoundNBT outputLiquid = nbtCompound.getCompound("outputLiquid");
-        if (outputLiquid != null) {
+        if (nbtCompound.contains("outputLiquid") && fluidInventoryOutput != null) {
+            CompoundNBT outputLiquid = nbtCompound.getCompound("outputLiquid");
             fluidInventoryOutput.setFluidAt(0, FluidStack.loadFluidStackFromNBT(outputLiquid));
         }
-        ListNBT inputLiquids = (ListNBT) nbtCompound.get("inputLiquids");
-        if (inputLiquids != null) {
+
+        if (nbtCompound.contains("inputLiquids") && fluidInventoryInput != null) {
+            ListNBT inputLiquids = (ListNBT) nbtCompound.get("inputLiquids");
             inputLiquids.forEach(e -> {
                 CompoundNBT nbt = (CompoundNBT) e;
                 int pos = nbt.getInt("pos");
@@ -136,15 +140,23 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
         }
     }
 
+    /**
+     * 检查物品栏, 遍及查找合成并缓存
+     * @return 是否有合成对应机器物品栏
+     */
     protected boolean checkInventoryForRecipe() {
-        for (ShapelessFluidRecipe shapelessFluidRecipe : RecipeManagerHelper.getRecipes(recipeType, ServerHandler.getServerInstance().getRecipeManager()).values()) {
-            if (shapelessFluidRecipe.matches(inventoryItemInput, fluidInventoryInput)) {
-                shapelessFluidRecipe.consume(inventoryItemInput, fluidInventoryInput);
-                currentRecipe = shapelessFluidRecipe;
-                progress.set(1, currentRecipe.ticks);
-                updateWorkBlockState(pos);
-                return true;
+        if (currentRecipe == null) { // LG: 不判断一下的话每次放一个物品都会吞一个
+            for (ShapelessFluidRecipe shapelessFluidRecipe : RecipeManagerHelper.getRecipes(recipeType, ServerHandler.getServerInstance().getRecipeManager()).values()) {
+                if (shapelessFluidRecipe.matches(inventoryItemInput, fluidInventoryInput)) {
+                    currentRecipe = shapelessFluidRecipe;
+                    progress.set(1, currentRecipe.ticks);
+                    return true;
+                }
             }
+        } else if (progress.get(0) == 0 && !currentRecipe.matches(inventoryItemInput, fluidInventoryInput)) {
+            currentRecipe = null; // LG: 只有在这里的时候才重新遍及检查合成
+            progress.set(0, 0);
+            return checkInventoryForRecipe();
         }
         return false;
     }
@@ -172,7 +184,7 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
         for (int i = 0; i < inventoryItemInput.getSizeInventory(); i++) {
             ItemStack stackInSlot = inventoryItemInput.getStackInSlot(i);
             CompoundNBT compoundNBT = new CompoundNBT();
-            if (stackInSlot != null) {
+            if (stackInSlot != ItemStack.EMPTY) {
                 stackInSlot.write(compoundNBT);
             }
             items.add(compoundNBT);
@@ -193,35 +205,43 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
         if (!this.world.isRemote) {
             if (currentRecipe != null) {
                 if (progress.get(0) >= progress.get(1)) {
+                    //处理完成
                     //GT式吞材料
                     FluidStack fluidResult = currentRecipe.outputFluid;
                     ItemStack itemResult = currentRecipe.output;
-                    if (itemResult != null) {
+                    if (itemResult != ItemStack.EMPTY) {
                         ItemStack stackInSlot = inventoryItemOutput.getStackInSlot(0);
                         if (!stackInSlot.isEmpty()) {
                             if (stackInSlot.getItem() == itemResult.getItem()) {
                                 int count = stackInSlot.getCount();
-                                int addedCount = count + itemResult.getCount() > stackInSlot.getMaxStackSize() ? stackInSlot.getMaxStackSize() : count + itemResult.getCount();
+                                int addedCount = Math.min(count + itemResult.getCount(), stackInSlot.getMaxStackSize());
                                 stackInSlot.setCount(addedCount);
                             }
                         } else {
-                            inventoryItemOutput.setInventorySlotContents(0, itemResult);
+                            inventoryItemOutput.setInventorySlotContents(0, itemResult.copy());
                         }
                     }
-                    if (fluidResult != null) {
+                    if (fluidResult != FluidStack.EMPTY && fluidInventoryOutput != null) {
                         //GT式吞材料
                         fluidInventoryOutput.addFluidAt(0, fluidResult.copy());
                     }
                     if (!checkInventoryForRecipe()) {
-                        currentRecipe = null;
                         updateWorkBlockState(pos);
                     }
                     progress.set(0, 0);
-                    sync();
-                } else {
+                } else if (progress.get(0) == 0) {
+                    // 合成开始
+                    // 吞材料
+                    currentRecipe.consume(inventoryItemInput, fluidInventoryInput);
+                    // 启动的 state
+                    updateWorkBlockState(pos);
+
                     progress.set(0, progress.get(0) + 1);
-                    sync();
+                } else {
+                    // 增加进度
+                    progress.set(0, progress.get(0) + 1);
                 }
+                sync();
             }
         }
     }
@@ -243,33 +263,43 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
         }
     }
 
+    @Nonnull
     public Inventory getInventoryItemInput() {
         return inventoryItemInput;
     }
 
+    @Nonnull
     public Inventory getInventoryItemOutput() {
         return inventoryItemOutput;
     }
 
+    @Nullable
     public FluidInventory getFluidInventoryInput() {
         return fluidInventoryInput;
     }
 
+    @Nullable
     public FluidInventory getFluidInventoryOutput() {
         return fluidInventoryOutput;
     }
+
+    // Capabilities
+    private final LazyOptional<IItemHandler> itemInputCapability = LazyOptional.of(() -> new InvWrapper(inventoryItemInput));
+    private final LazyOptional<IItemHandler> itemOutputCapability = LazyOptional.of(() -> new InvWrapper(inventoryItemOutput));
+    private final LazyOptional<IFluidHandler> fluidInputCapability = LazyOptional.of(() -> fluidInventoryInput);
+    private final LazyOptional<IFluidHandler> fluidOutputCapability = LazyOptional.of(() -> fluidInventoryOutput);
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side == Direction.UP)
-            return (LazyOptional<T>) LazyOptional.of(() -> new InvWrapper(inventoryItemInput));
+            return itemInputCapability.cast();
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side == Direction.DOWN)
-            return (LazyOptional<T>) LazyOptional.of(() -> new InvWrapper(inventoryItemOutput));
+            return itemOutputCapability.cast();
         if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && side == Direction.UP)
-            return (LazyOptional<T>) LazyOptional.of(() -> fluidInventoryInput);
+            return fluidInputCapability.cast();
         if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && side == Direction.DOWN)
-            return (LazyOptional<T>) LazyOptional.of(() -> fluidInventoryOutput);
+            return fluidOutputCapability.cast();
         return super.getCapability(cap, side);
     }
 
@@ -291,9 +321,12 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
 
     /**
      * 目前mod机器只使用int state
+     * LG: 需要重新设置 TileEntity 不然会出现bug
      */
     protected void updateWorkBlockState(BlockPos pos) {
         BlockState blockState = world.getBlockState(pos);
-        world.setBlockState(pos, getNewBlockState(blockState));
+        world.setBlockState(pos, getNewBlockState(blockState), 3);
+        validate();
+        world.setTileEntity(pos, this);
     }
 }

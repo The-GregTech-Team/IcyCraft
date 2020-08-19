@@ -1,0 +1,12 @@
+{
+  "type": "icycream:macerating",
+  "ticks": 200,
+  "ingredients": [
+    {
+      "item": "minecraft:cocoa_beans"
+    }
+  ],
+  "result": {
+    "item": "icycream:cocoa_powder"
+  }
+}

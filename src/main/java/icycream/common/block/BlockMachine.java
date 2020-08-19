@@ -64,7 +64,7 @@ public abstract class BlockMachine extends ContainerBlock {
         }
         else {
             if (hit.getType() == RayTraceResult.Type.BLOCK) {
-                if (player.getPosition().withinDistance(pos, 3)) {
+                if (player.getPosition().withinDistance(pos, 6)) {
                     //server only
                     AbstractTileEntityMachine tileEntity = (AbstractTileEntityMachine) worldIn.getTileEntity(pos);
                     if (tileEntity != null) {
