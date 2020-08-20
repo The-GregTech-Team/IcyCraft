@@ -1,5 +1,6 @@
 package icycream.common.tile;
 
+import icycream.common.block.BlockRefridgerator;
 import icycream.common.fluid.FluidInventory;
 import icycream.common.gui.RefrigeratorContainer;
 import icycream.common.gui.ScalableIntArray;
@@ -8,6 +9,7 @@ import icycream.common.recipes.ShapelessFluidRecipe;
 import icycream.common.registry.BlockRegistryHandler;
 import icycream.common.registry.ServerHandler;
 import icycream.common.util.RecipeManagerHelper;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -15,11 +17,11 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -34,6 +36,15 @@ import java.util.Map;
 public class TileEntityRefrigerator extends AbstractTileEntityMachine {
 
     protected Map<Integer, ShapelessFluidRecipe> outputs = new HashMap<>();
+
+    /**
+     * 温度
+     * 海拔64m及以下稳定30度
+     * 每上升8m下降3度
+     */
+    private int initTemperature = 30;
+
+    private int temperature = 30;
 
     public TileEntityRefrigerator() {
         super(BlockRegistryHandler.refrigerator);
@@ -61,7 +72,6 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
                 if (index < 9 && world != null) {
                     checkInventoryForRecipe();
                 }
-                //markDirty();
             }
         };
         this.inventoryItemOutput = new Inventory(9) {
@@ -116,6 +126,7 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
     @Override
     protected boolean checkInventoryForRecipe() {
         boolean hasThingsProcessing = false;
+        FluidInventory nullFluid = new FluidInventory(0, 0);
         for (int i = 0; i < 9; i++) {
             int finalI = i;
             IInventory inv = new Inventory(1) {
@@ -125,13 +136,13 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
             };
             if (outputs.get(i) == null) { // LG: 不判断一下的话每次放一个物品都会吞一个
                 for (ShapelessFluidRecipe shapelessFluidRecipe : RecipeManagerHelper.getRecipes(recipeType, ServerHandler.getServerInstance().getRecipeManager()).values()) {
-                    if (shapelessFluidRecipe.matches(inv, fluidInventoryInput)) {
+                    if (shapelessFluidRecipe.matches(inv, nullFluid)) {
                         outputs.put(i, shapelessFluidRecipe);
                         setProgress(i, 0, shapelessFluidRecipe.ticks);
                         hasThingsProcessing |= true;
                     }
                 }
-            } else if (getProgress(i) == 0 && !outputs.get(i).matches(inv, fluidInventoryInput)) { // LG: 只有在这里的时候才重新遍及检查合成
+            } else if (getProgress(i) == 0 && !outputs.get(i).matches(inv, nullFluid)) { // LG: 只有在这里的时候才重新遍及检查合成
                 outputs.put(i, null);
                 progress.set(0, 0);
                 hasThingsProcessing |= checkInventoryForRecipe();
@@ -143,43 +154,47 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
     @Override
     public void tick() {
         if (!this.world.isRemote) {
-            for (int i = 0; i < 9; i++) {
-                ShapelessFluidRecipe currentRecipe = outputs.get(i);
-                if (currentRecipe != null) {
-                    if (getProgress(i) >= getProgressMax(i)) {
-                        //处理完成
-                        //GT式吞材料
-                        ItemStack itemResult = currentRecipe.output;
-                        if (itemResult != ItemStack.EMPTY) {
-                            ItemStack stackInSlot = inventoryItemOutput.getStackInSlot(i);
-                            if (!stackInSlot.isEmpty()) {
-                                if (stackInSlot.getItem() == itemResult.getItem()) {
-                                    int count = stackInSlot.getCount();
-                                    int addedCount = Math.min(count + itemResult.getCount(), stackInSlot.getMaxStackSize());
-                                    stackInSlot.setCount(addedCount);
+            updateWorkBlockState(pos);
+            /**
+             * 冰箱只有温度 < 0才会开始处理东西
+             */
+            if(temperature <= 0) {
+                /**
+                 * 9个格子一一对应每个格子都可以处理配方
+                 */
+                for (int i = 0; i < 9; i++) {
+                    ShapelessFluidRecipe currentRecipe = outputs.get(i);
+                    if (currentRecipe != null) {
+                        if (getProgress(i) >= getProgressMax(i)) {
+                            //处理完成
+                            //GT式吞材料
+                            ItemStack itemResult = currentRecipe.output;
+                            if (itemResult != ItemStack.EMPTY) {
+                                ItemStack stackInSlot = inventoryItemOutput.getStackInSlot(i);
+                                if (!stackInSlot.isEmpty()) {
+                                    if (stackInSlot.getItem() == itemResult.getItem()) {
+                                        int count = stackInSlot.getCount();
+                                        int addedCount = Math.min(count + itemResult.getCount(), stackInSlot.getMaxStackSize());
+                                        stackInSlot.setCount(addedCount);
+                                    }
+                                } else {
+                                    inventoryItemOutput.setInventorySlotContents(i, itemResult.copy());
                                 }
-                            } else {
-                                inventoryItemOutput.setInventorySlotContents(i, itemResult.copy());
                             }
-                        }
-                        if (!checkInventoryForRecipe()) {
-                            updateWorkBlockState(pos);
-                        }
-                        setProgress(i, 0);
-                    } else if (getProgress(i) == 0) {
-                        // 合成开始
-                        // 吞材料
-                        currentRecipe.consume(inventoryItemInput, fluidInventoryInput);
-                        // 启动的 state
-                        updateWorkBlockState(pos);
 
-                        setProgress(i, getProgress(i) + 1);
-                    } else {
-                        // 增加进度
-                        setProgress(i, getProgress(i) + 1);
+                            setProgress(i, 0);
+                        } else if (getProgress(i) == 0) {
+                            // 合成开始
+                            // 吞材料
+                            currentRecipe.consume(inventoryItemInput, fluidInventoryInput);
+
+                            setProgress(i, getProgress(i) + 1);
+                        } else {
+                            // 增加进度
+                            setProgress(i, getProgress(i) + 1);
+                        }
                     }
                 }
-
             }
         }
     }
@@ -211,5 +226,49 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
     protected int getProgressMax(int pos) {
         int base = pos * 2;
         return this.progress.get(base + 1);
+    }
+
+    /**
+     * 目前mod机器只使用int state
+     * LG: 需要重新设置 TileEntity 不然会出现bug
+     *
+     * @param pos
+     */
+    @Override
+    protected void updateWorkBlockState(BlockPos pos) {
+        BlockState blockState = world.getBlockState(pos);
+        int stateIntByTemperature = getStateIntByTemperature();
+        if(blockState.get(BlockRefridgerator.STATE_TEMP).intValue() != stateIntByTemperature) {
+            world.setBlockState(pos, getNewBlockState(blockState), 3);
+            validate();
+            world.setTileEntity(pos, this);
+        }
+    }
+
+    public void setInitTemperature(int initTemperature) {
+        this.initTemperature = initTemperature;
+    }
+
+    /**
+     * 根据机器当前状态决定blockstate
+     *
+     * @param state
+     * @return
+     */
+    @Override
+    protected BlockState getNewBlockState(BlockState state) {
+        return state.with(BlockRefridgerator.STATE_TEMP, getStateIntByTemperature());
+    }
+
+    protected int getStateIntByTemperature() {
+        if(temperature > 0) {
+            return 3;
+        } else if(temperature <= 0 && temperature > -10) {
+            return 2;
+        } else if(temperature <= -10 && temperature >= -15) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }
