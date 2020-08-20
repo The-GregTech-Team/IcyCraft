@@ -46,7 +46,7 @@ public class RefrigeratorContainer extends AbstractMachineContainer {
      */
     @Override
     protected void addCustomSlots() {
-        int x0 = 62;
+        int x0 = 20;
         int y0 = 17;
         int L = 18;
         for (int i = 0; i < 3; i++) {
@@ -54,6 +54,13 @@ public class RefrigeratorContainer extends AbstractMachineContainer {
                 this.addSlot(new Slot(this.itemInventoryInput, 3 * i + j, x0 + i * L, y0 + j * L));
             }
         }
-        this.addSlot(new Slot(this.itemInventoryInput, 9, 134, 35));
+        x0 = 93;
+        y0 = 17;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                this.addSlot(new Slot(this.itemInventoryOutput, 3 * i + j, x0 + i * L, y0 + j * L));
+            }
+        }
+        this.addSlot(new Slot(this.itemInventoryInput, 9, 153, 35));
     }
 }

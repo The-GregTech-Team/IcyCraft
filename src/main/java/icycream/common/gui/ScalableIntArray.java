@@ -9,7 +9,16 @@ import java.util.List;
  * 可伸缩的intarray
  */
 public class ScalableIntArray implements IIntArray {
-    private List<Integer> integerList = new ArrayList<>();
+    private List<Integer> integerList;
+
+    public ScalableIntArray() {
+        this.integerList = new ArrayList<>();
+    }
+
+    public ScalableIntArray(int size) {
+        this.integerList = new ArrayList<>(size);
+    }
+
     @Override
     public int get(int index) {
         return integerList.get(index);
