@@ -2,13 +2,8 @@ package icycream.common.registry;
 
 import icycream.IcyCream;
 import icycream.common.fluid.FluidIngredient;
-import net.minecraft.block.Block;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.block.material.Material;
+import icycream.common.item.Ingredient;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.item.BucketItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraftforge.event.RegistryEvent;
@@ -17,13 +12,17 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.awt.*;
 
-import static net.minecraft.item.Items.BUCKET;
-
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class FluidRegistryHandler {
     @SubscribeEvent
     public static void registerFluids(RegistryEvent.Register<Fluid> event) throws IllegalAccessException, NoSuchFieldException, ClassNotFoundException {
        registerFluid("fluid_egg", new Color(0xffb800));
+       registerFluid("fluid_oil", new Color(0xb5d000));
+       registerFluid("fluid_sweet_berries_juice", Ingredient.BERRY.getColor());
+       registerFluid("fluid_apple_juice", Ingredient.APPLE.getColor());
+       registerFluid("fluid_carrot_juice", Ingredient.CARROT.getColor());
+       registerFluid("fluid_pumpkin_juice", Ingredient.PUMPKIN.getColor());
+       registerFluid("fluid_melon_juice", Ingredient.MELON.getColor());
     }
 
     /**

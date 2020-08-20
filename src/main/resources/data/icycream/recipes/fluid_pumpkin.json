@@ -1,0 +1,13 @@
+{
+  "type": "icycream:extracting",
+  "ticks": 30,
+  "ingredients": [
+    {
+      "type": "minecraft:melon_slice"
+    }
+  ],
+  "outputFluid": {
+    "fluid": "icycream:fluid_pumpkin_juice",
+    "amount": 100
+  }
+}

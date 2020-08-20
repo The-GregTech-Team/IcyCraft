@@ -1,0 +1,13 @@
+{
+  "type": "icycream:extracting",
+  "ticks": 400,
+  "ingredients": [
+    {
+      "type": "minecraft:porkchop"
+    }
+  ],
+  "outputFluid": {
+    "fluid": "icycream:fluid_oil",
+    "amount": 80
+  }
+}

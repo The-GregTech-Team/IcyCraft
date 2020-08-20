@@ -1,0 +1,13 @@
+{
+  "type": "icycream:extracting",
+  "ticks": 20,
+  "ingredients": [
+    {
+      "type": "minecraft:carrot"
+    }
+  ],
+  "outputFluid": {
+    "fluid": "icycream:fluid_carrot_juice",
+    "amount": 100
+  }
+}

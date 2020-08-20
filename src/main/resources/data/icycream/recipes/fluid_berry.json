@@ -1,0 +1,13 @@
+{
+  "type": "icycream:extracting",
+  "ticks": 5,
+  "ingredients": [
+    {
+      "type": "minecraft:sweet_berries"
+    }
+  ],
+  "outputFluid": {
+    "fluid": "icycream:fluid_sweet_berries_juice",
+    "amount": 25
+  }
+}
