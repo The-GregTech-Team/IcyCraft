@@ -1,6 +1,6 @@
 package icycream.common.tile;
 
-import icycream.common.block.BlockRefridgerator;
+import icycream.common.block.BlockRefrigerator;
 import icycream.common.fluid.FluidInventory;
 import icycream.common.gui.RefrigeratorContainer;
 import icycream.common.gui.ScalableIntArray;
@@ -238,7 +238,7 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
     protected void updateWorkBlockState(BlockPos pos) {
         BlockState blockState = world.getBlockState(pos);
         int stateIntByTemperature = getStateIntByTemperature();
-        if(blockState.get(BlockRefridgerator.STATE_TEMP).intValue() != stateIntByTemperature) {
+        if(blockState.get(BlockRefrigerator.STATE_TEMP).intValue() != stateIntByTemperature) {
             world.setBlockState(pos, getNewBlockState(blockState), 3);
             validate();
             world.setTileEntity(pos, this);
@@ -257,7 +257,7 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
      */
     @Override
     protected BlockState getNewBlockState(BlockState state) {
-        return state.with(BlockRefridgerator.STATE_TEMP, getStateIntByTemperature());
+        return state.with(BlockRefrigerator.STATE_TEMP, getStateIntByTemperature());
     }
 
     protected int getStateIntByTemperature() {

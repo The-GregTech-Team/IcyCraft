@@ -16,11 +16,12 @@ import javax.annotation.Nullable;
 
 /**
  * 冰箱，冻冰激凌
+ * @author lyt
  */
-public class BlockRefridgerator extends BlockMachine {
+public class BlockRefrigerator extends BlockMachine {
     public static IntegerProperty STATE_TEMP = IntegerProperty.create("templevel", 0, 3);
 
-    public BlockRefridgerator(Properties properties) {
+    public BlockRefrigerator(Properties properties) {
         super(properties);
     }
 

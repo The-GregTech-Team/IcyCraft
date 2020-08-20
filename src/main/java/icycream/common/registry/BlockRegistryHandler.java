@@ -4,7 +4,7 @@ import icycream.IcyCream;
 import icycream.common.block.BlockExtractor;
 import icycream.common.block.BlockMacerator;
 import icycream.common.block.BlockMixer;
-import icycream.common.block.BlockRefridgerator;
+import icycream.common.block.BlockRefrigerator;
 import icycream.common.tile.TileEntityExtractor;
 import icycream.common.tile.TileEntityMacerator;
 import icycream.common.tile.TileEntityMixer;
@@ -48,7 +48,7 @@ public class BlockRegistryHandler {
         extracter = registerTile("extractor", block, TileEntityExtractor.class);
         block = registerBlocksWithItem(new BlockMixer(Block.Properties.create(Material.IRON).hardnessAndResistance(6, 30)),  "mixer");
         mixer = registerTile("mixer", block, TileEntityMixer.class);
-        block = registerBlocksWithItem(new BlockRefridgerator(Block.Properties.create(Material.IRON).hardnessAndResistance(6, 30)), "refrigerator");
+        block = registerBlocksWithItem(new BlockRefrigerator(Block.Properties.create(Material.IRON).hardnessAndResistance(6, 30)), "refrigerator");
         refrigerator =  registerTile("refridgerator", block, TileEntityRefrigerator.class);
         block = registerBlocksWithItem(new BlockMacerator(Block.Properties.create(Material.IRON).hardnessAndResistance(6, 30)), "macerator");
         macerator = registerTile("macerator", block, TileEntityMacerator.class);

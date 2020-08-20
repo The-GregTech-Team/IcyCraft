@@ -31,5 +31,13 @@ public class GuiMaceratorScreen extends AbstractGuiMachineScreen<MaceratorContai
          以 x y 为起点绘制纹理中以 u v 为起点，长w宽h的矩形
          */
         blit(i, j, 0, 0, this.xSize, this.ySize);
+        //176,0 -> 176 + 16, 27 + 16
+
+        //begin: (80, 37)
+
+        //加工图标左上角(176, 0)
+        //宽 = 16
+        float progress = this.container.getProgress();
+        blit(i + 80, j + 37, 176, 0, (int) (16 * progress),16);
     }
 }
