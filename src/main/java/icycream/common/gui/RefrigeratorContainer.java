@@ -6,7 +6,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.math.BlockPos;
@@ -19,13 +18,13 @@ import net.minecraftforge.common.extensions.IForgeContainerType;
  */
 public class RefrigeratorContainer extends AbstractMachineContainer {
 
-    public static ContainerType<RefrigeratorContainer> type = (ContainerType<RefrigeratorContainer>) IForgeContainerType.create(
+    public static final ContainerType<RefrigeratorContainer> TYPE = (ContainerType<RefrigeratorContainer>) IForgeContainerType.create(
             (int windowId, PlayerInventory inv, PacketBuffer data)
                     -> new RefrigeratorContainer(windowId, inv, data.readBlockPos(), Minecraft.getInstance().world.getWorld(), new ProgressIntArray()))
             .setRegistryName("refrigerator_container");
 
     public RefrigeratorContainer(int id, PlayerInventory playerInventory, BlockPos pos, World world, IIntArray progressIntArray) {
-        super(id, playerInventory, type, pos, world, progressIntArray);
+        super(id, playerInventory, TYPE, pos, world, progressIntArray);
     }
 
     /**
@@ -47,7 +46,7 @@ public class RefrigeratorContainer extends AbstractMachineContainer {
      */
     @Override
     protected void addCustomSlots() {
-        int x0 = 62;
+        int x0 = 20;
         int y0 = 17;
         int L = 18;
         for (int i = 0; i < 3; i++) {
@@ -55,6 +54,13 @@ public class RefrigeratorContainer extends AbstractMachineContainer {
                 this.addSlot(new Slot(this.itemInventoryInput, 3 * i + j, x0 + i * L, y0 + j * L));
             }
         }
-        this.addSlot(new Slot(this.itemInventoryInput, 9, 134, 35));
+        x0 = 93;
+        y0 = 17;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                this.addSlot(new Slot(this.itemInventoryOutput, 3 * i + j, x0 + i * L, y0 + j * L));
+            }
+        }
+        this.addSlot(new Slot(this.itemInventoryInput, 9, 153, 35));
     }
 }

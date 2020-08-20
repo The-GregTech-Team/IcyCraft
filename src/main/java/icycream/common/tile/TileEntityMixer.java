@@ -2,6 +2,7 @@ package icycream.common.tile;
 
 import icycream.common.fluid.FluidInventory;
 import icycream.common.gui.MixerContainer;
+import icycream.common.gui.ProgressIntArray;
 import icycream.common.recipes.RecipeTypes;
 import icycream.common.registry.BlockRegistryHandler;
 import net.minecraft.entity.player.PlayerEntity;
@@ -43,6 +44,7 @@ public class TileEntityMixer extends AbstractTileEntityMachine {
                 //markDirty();
             }
         };
+        this.progress = new ProgressIntArray();
         this.inventoryItemOutput = new Inventory(1);
         this.fluidInventoryInput = new FluidInventory(2, 8000);
         this.fluidInventoryOutput = new FluidInventory(1, 8000);

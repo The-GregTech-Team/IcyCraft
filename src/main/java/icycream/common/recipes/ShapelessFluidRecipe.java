@@ -1,5 +1,6 @@
 package icycream.common.recipes;
 
+import com.google.common.collect.Lists;
 import icycream.common.util.InventoryUtils;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -50,6 +51,14 @@ public class ShapelessFluidRecipe implements IRecipe<IInventory> {
             }
         }
         return true;
+    }
+
+    /**
+     * 给冰箱用的，只判断单个格子
+     * @return
+     */
+    public boolean matches(IInventory inv, int index) {
+        return RecipeMatcher.findMatches(Lists.newArrayList(inv.getStackInSlot(index)), ingredients) != null;
     }
 
     public void consume(IInventory inv, IFluidHandler fluidHandler) {
