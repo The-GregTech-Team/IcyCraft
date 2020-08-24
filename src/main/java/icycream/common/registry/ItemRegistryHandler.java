@@ -51,6 +51,27 @@ public class ItemRegistryHandler {
                 new Item(new Item.Properties().food(new Food.Builder().hunger(1).fastToEat().build()).group(itemGroup))
                 .setRegistryName(IcyCream.MODID, "cocoa_powder")
         );
+
+        //冰激凌勺子
+        event.getRegistry().register(
+                new Item(new Item.Properties()).setRegistryName(IcyCream.MODID, "spoon")
+        );
+
+        //冰激凌蛋筒
+        event.getRegistry().register(
+                new Item(new Item.Properties()).setRegistryName(IcyCream.MODID, "icecream_handle")
+        );
+
+        //装满冰激凌的筒
+        event.getRegistry().register(
+                new Item(new Item.Properties()).setRegistryName(IcyCream.MODID, "icecream_bucket")
+        );
+
+        //冰激凌球
+        event.getRegistry().register(
+                new Item(new Item.Properties()).setRegistryName(IcyCream.MODID, "icecream_ball")
+        );
+
         RecipeManagerHelper.loadRecipes();
     }
 

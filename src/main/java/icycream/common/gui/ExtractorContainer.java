@@ -32,9 +32,9 @@ public class ExtractorContainer extends AbstractMachineContainer {
          * 给container添加slots
          */
         //左方输入物品
-        addSlot(new SlotInput(itemInventoryInput, 0, 19, 17));
+        addSlot(new SlotInput(itemInventoryInput, 0, 80, 19));
 
         //右方输出液体
-        slotFluidList.add(new SlotFluid(fluidInventoryOutput, 0, 145, 35));
+        slotFluidList.add(new SlotFluid(fluidInventoryOutput, 0, 80, 55));
     }
 }

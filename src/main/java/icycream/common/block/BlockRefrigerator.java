@@ -55,16 +55,6 @@ public class BlockRefrigerator extends BlockMachine {
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
         TileEntityRefrigerator tileEntity = (TileEntityRefrigerator) worldIn.getTileEntity(pos);
-        tileEntity.setInitTemperature(getTemperature(pos));
-
-    }
-
-    /**
-     * 温度
-     * 海拔64m及以下稳定30度
-     * 每上升8m下降3度
-     */
-    protected int getTemperature(BlockPos pos) {
-        return 30 - pos.getY() > 64 ? ((pos.getY() - 64) / 8) * 3 : 0;
+        tileEntity.setInitTemperature( 30 - pos.getY() > 64 ? ((pos.getY() - 64) / 8) * 3 : 0);
     }
 }

@@ -6,6 +6,7 @@ import icycream.common.gui.MixerContainer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 /**
  * @author lyt
@@ -15,6 +16,11 @@ public class GuiMixerScreen extends AbstractGuiMachineScreen<MixerContainer> {
 
     public GuiMixerScreen(MixerContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn, 175, 165);
+    }
+
+    @Override
+    public ITextComponent getTitle() {
+        return new StringTextComponent("Mixer");
     }
 
     /**

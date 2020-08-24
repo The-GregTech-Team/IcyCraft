@@ -1,0 +1,13 @@
+{
+  "type": "icycream:extracting",
+  "ticks": 20,
+  "ingredients": [
+    {
+      "item": "minecraft:apple"
+    }
+  ],
+  "outputFluid": {
+    "fluid": "icycream:fluid_apple_juice",
+    "amount": 100
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "type": "icycream:extracting",
+  "ticks": 600,
+  "ingredients": [
+    {
+      "item": "minecraft:melon"
+    }
+  ],
+  "outputFluid": {
+    "fluid": "icycream:fluid_melon_juice",
+    "amount": 800
+  }
+}

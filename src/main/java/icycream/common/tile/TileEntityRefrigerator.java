@@ -69,8 +69,9 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
                  * world is null on loading phase
                  */
                 super.setInventorySlotContents(index, stack);
-                if (index < 9 && world != null) {
-                    checkInventoryForRecipe();
+                if (index < 9 && world != null && outputs.get(index) != null) {
+                    ShapelessFluidRecipe shapelessFluidRecipe = checkInventoryForRecipe(index);
+                    outputs.put(index,  shapelessFluidRecipe);
                 }
             }
         };
@@ -123,32 +124,20 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
      *
      * @return 是否有合成对应机器物品栏
      */
-    @Override
-    protected boolean checkInventoryForRecipe() {
-        boolean hasThingsProcessing = false;
-        FluidInventory nullFluid = new FluidInventory(0, 0);
-        for (int i = 0; i < 9; i++) {
-            int finalI = i;
-            IInventory inv = new Inventory(1) {
-                {
-                    setInventorySlotContents(0, inventoryItemInput.getStackInSlot(finalI));
-                }
-            };
-            if (outputs.get(i) == null) { // LG: 不判断一下的话每次放一个物品都会吞一个
-                for (ShapelessFluidRecipe shapelessFluidRecipe : RecipeManagerHelper.getRecipes(recipeType, ServerHandler.getServerInstance().getRecipeManager()).values()) {
-                    if (shapelessFluidRecipe.matches(inv, nullFluid)) {
-                        outputs.put(i, shapelessFluidRecipe);
-                        setProgress(i, 0, shapelessFluidRecipe.ticks);
-                        hasThingsProcessing |= true;
-                    }
-                }
-            } else if (getProgress(i) == 0 && !outputs.get(i).matches(inv, nullFluid)) { // LG: 只有在这里的时候才重新遍及检查合成
-                outputs.put(i, null);
-                progress.set(0, 0);
-                hasThingsProcessing |= checkInventoryForRecipe();
+    protected ShapelessFluidRecipe checkInventoryForRecipe(int index) {
+        IInventory inventory = new Inventory(1) {
+            {
+                setInventorySlotContents(0, inventoryItemInput.getStackInSlot(index));
+            }
+        };
+        FluidInventory nullFluid = new FluidInventory(0,0);
+        for (ShapelessFluidRecipe shapelessFluidRecipe : RecipeManagerHelper.getRecipes(recipeType, ServerHandler.getServerInstance().getRecipeManager()).values()) {
+            if (shapelessFluidRecipe.matches(inventory, nullFluid)) {
+                setProgressMax(index, shapelessFluidRecipe.ticks);
+                return shapelessFluidRecipe;
             }
         }
-        return hasThingsProcessing;
+        return null;
     }
 
     @Override
@@ -165,7 +154,7 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
                 for (int i = 0; i < 9; i++) {
                     ShapelessFluidRecipe currentRecipe = outputs.get(i);
                     if (currentRecipe != null) {
-                        if (getProgress(i) >= getProgressMax(i)) {
+                        if (isProcessingFinished(i)) {
                             //处理完成
                             //GT式吞材料
                             ItemStack itemResult = currentRecipe.output;
@@ -181,17 +170,17 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
                                     inventoryItemOutput.setInventorySlotContents(i, itemResult.copy());
                                 }
                             }
-
+                            checkInventoryForRecipe(i);
                             setProgress(i, 0);
                         } else if (getProgress(i) == 0) {
                             // 合成开始
                             // 吞材料
                             currentRecipe.consume(inventoryItemInput, fluidInventoryInput);
 
-                            setProgress(i, getProgress(i) + 1);
+                            incrementProgress(i);
                         } else {
                             // 增加进度
-                            setProgress(i, getProgress(i) + 1);
+                            incrementProgress(i);
                         }
                     }
                 }
@@ -215,7 +204,11 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
     protected void setProgress(int pos, int progress) {
         int base = pos * 2;
         this.progress.set(base, progress);
+    }
 
+    protected void incrementProgress(int pos) {
+        int base = pos * 2;
+        this.progress.set(base, getProgress(pos) + 1);
     }
 
     protected int getProgress(int pos) {
@@ -226,6 +219,15 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
     protected int getProgressMax(int pos) {
         int base = pos * 2;
         return this.progress.get(base + 1);
+    }
+
+    protected void setProgressMax(int pos, int maxTicks) {
+        int base = pos * 2;
+        this.progress.set(base + 1, maxTicks);
+    }
+
+    protected boolean isProcessingFinished(int i) {
+        return getProgress(i) > 0 && getProgress(i) >= getProgressMax(i);
     }
 
     /**

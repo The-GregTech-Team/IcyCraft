@@ -39,7 +39,7 @@ public class TileEntityMixer extends AbstractTileEntityMachine {
                  */
                 super.setInventorySlotContents(index, stack);
                 if(currentRecipe == null && world != null) {
-                    checkInventoryForRecipe();
+                    currentRecipe = checkInventoryForRecipe();
                 }
                 //markDirty();
             }

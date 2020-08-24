@@ -160,21 +160,14 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
      * 检查物品栏, 遍及查找合成并缓存
      * @return 是否有合成对应机器物品栏
      */
-    protected boolean checkInventoryForRecipe() {
-        if (currentRecipe == null) { // LG: 不判断一下的话每次放一个物品都会吞一个
-            for (ShapelessFluidRecipe shapelessFluidRecipe : RecipeManagerHelper.getRecipes(recipeType, ServerHandler.getServerInstance().getRecipeManager()).values()) {
-                if (shapelessFluidRecipe.matches(inventoryItemInput, fluidInventoryInput)) {
-                    currentRecipe = shapelessFluidRecipe;
-                    progress.set(1, currentRecipe.ticks);
-                    return true;
-                }
+    protected ShapelessFluidRecipe checkInventoryForRecipe() {
+        for (ShapelessFluidRecipe shapelessFluidRecipe : RecipeManagerHelper.getRecipes(recipeType, ServerHandler.getServerInstance().getRecipeManager()).values()) {
+            if (shapelessFluidRecipe.matches(inventoryItemInput, fluidInventoryInput)) {
+                setMaxTicks(shapelessFluidRecipe.ticks);
+                return shapelessFluidRecipe;
             }
-        } else if (progress.get(0) == 0 && !currentRecipe.matches(inventoryItemInput, fluidInventoryInput)) {
-            currentRecipe = null; // LG: 只有在这里的时候才重新遍及检查合成
-            progress.set(0, 0);
-            return checkInventoryForRecipe();
         }
-        return false;
+        return null;
     }
 
     @Override
@@ -220,7 +213,7 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
     public void tick() {
         if (!this.world.isRemote) {
             if (currentRecipe != null) {
-                if (progress.get(0) >= progress.get(1)) {
+                if (isProcessingFinished()) {
                     //处理完成
                     //GT式吞材料
                     FluidStack fluidResult = currentRecipe.outputFluid;
@@ -241,7 +234,8 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
                         //GT式吞材料
                         fluidInventoryOutput.addFluidAt(0, fluidResult.copy());
                     }
-                    if (!checkInventoryForRecipe()) {
+                    currentRecipe = checkInventoryForRecipe();
+                    if (currentRecipe == null) {
                         updateWorkBlockState(pos);
                     }
                     progress.set(0, 0);
@@ -252,10 +246,10 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
                     // 启动的 state
                     updateWorkBlockState(pos);
 
-                    progress.set(0, progress.get(0) + 1);
+                    incrementProgress();
                 } else {
                     // 增加进度
-                    progress.set(0, progress.get(0) + 1);
+                    incrementProgress();
                 }
                 sync();
             }
@@ -344,5 +338,17 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
         world.setBlockState(pos, getNewBlockState(blockState), 3);
         validate();
         world.setTileEntity(pos, this);
+    }
+
+    protected boolean isProcessingFinished() {
+        return progress.get(0) > 0 && progress.get(0) >= progress.get(1);
+    }
+
+    protected void setMaxTicks(int maxTicks) {
+        progress.set(1, maxTicks);
+    }
+
+    protected void incrementProgress() {
+        progress.set(0, progress.get(0) + 1);
     }
 }

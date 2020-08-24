@@ -20,7 +20,7 @@ public class RefrigeratorContainer extends AbstractMachineContainer {
 
     public static final ContainerType<RefrigeratorContainer> TYPE = (ContainerType<RefrigeratorContainer>) IForgeContainerType.create(
             (int windowId, PlayerInventory inv, PacketBuffer data)
-                    -> new RefrigeratorContainer(windowId, inv, data.readBlockPos(), Minecraft.getInstance().world.getWorld(), new ProgressIntArray()))
+                    -> new RefrigeratorContainer(windowId, inv, data.readBlockPos(), Minecraft.getInstance().world.getWorld(), new ScalableIntArray(27)))
             .setRegistryName("refrigerator_container");
 
     public RefrigeratorContainer(int id, PlayerInventory playerInventory, BlockPos pos, World world, IIntArray progressIntArray) {
@@ -63,4 +63,19 @@ public class RefrigeratorContainer extends AbstractMachineContainer {
         }
         this.addSlot(new Slot(this.itemInventoryInput, 9, 153, 35));
     }
+
+    public float getProgress(int i) {
+        return getCurrentTicks(i) * 1.0f / getTicksMax(i);
+    }
+
+    protected int getCurrentTicks(int pos) {
+        int base = pos * 2;
+        return this.progressIntArray.get(base);
+    }
+
+    protected int getTicksMax(int pos) {
+        int base = pos * 2;
+        return this.progressIntArray.get(base + 1);
+    }
+
 }

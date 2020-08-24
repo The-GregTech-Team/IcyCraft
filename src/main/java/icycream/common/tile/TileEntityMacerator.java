@@ -1,6 +1,7 @@
 package icycream.common.tile;
 
 import icycream.common.gui.MaceratorContainer;
+import icycream.common.gui.ProgressIntArray;
 import icycream.common.recipes.RecipeTypes;
 import icycream.common.registry.BlockRegistryHandler;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,9 +28,12 @@ public class TileEntityMacerator  extends AbstractTileEntityMachine {
             @Override
             public void setInventorySlotContents(int index, ItemStack stack) {
                 super.setInventorySlotContents(index, stack);
-                checkInventoryForRecipe();
+                if(currentRecipe == null && world != null) {
+                    currentRecipe = checkInventoryForRecipe();
+                }
             }
         };
+        this.progress = new ProgressIntArray();
         this.inventoryItemOutput = new Inventory(1);
         this.recipeType = RecipeTypes.MACERATING;
     }

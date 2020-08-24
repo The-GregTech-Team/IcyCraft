@@ -6,12 +6,18 @@ import icycream.common.gui.MaceratorContainer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 
 public class GuiMaceratorScreen extends AbstractGuiMachineScreen<MaceratorContainer> {
     public static final ResourceLocation GUI_BACKGROUND = new ResourceLocation(IcyCream.MODID, "textures/gui/macerator_gui.png");
 
     public GuiMaceratorScreen(MaceratorContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn, 175, 165);
+    }
+
+    @Override
+    public ITextComponent getTitle() {
+        return new StringTextComponent("Macerator");
     }
 
     /**
@@ -38,6 +44,6 @@ public class GuiMaceratorScreen extends AbstractGuiMachineScreen<MaceratorContai
         //加工图标左上角(176, 0)
         //宽 = 16
         float progress = this.container.getProgress();
-        blit(i + 80, j + 37, 176, 0, (int) (16 * progress),16);
+        blit(i + 80, j + 37, 176, 0, 16,(int) (16 * progress));
     }
 }
