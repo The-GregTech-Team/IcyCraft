@@ -1,5 +1,6 @@
 package icycream;
 
+import icycream.common.recipes.special.SpecialRecipes;
 import icycream.common.registry.BlockRegistryHandler;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -22,5 +23,6 @@ public class IcyCream
     public IcyCream() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         new BlockRegistryHandler(modEventBus);
+        SpecialRecipes.registerAll();
     }
 }
