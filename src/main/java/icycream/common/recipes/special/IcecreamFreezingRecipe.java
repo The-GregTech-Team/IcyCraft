@@ -1,8 +1,11 @@
 package icycream.common.recipes.special;
 
 import icycream.common.recipes.RecipeTypes;
+import icycream.common.util.InventoryUtils;
 import icycream.common.util.RecipeManagerHelper;
 import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipe;
@@ -30,7 +33,7 @@ public class IcecreamFreezingRecipe extends SpecialRecipe {
         return true;
     }
 
-    public boolean matches(CraftingInventory inv, World worldIn, int tempLevel) {
+    public boolean matches(IInventory inv, int tempLevel) {
         return inv.getStackInSlot(0).getItem() == ingredient.getItem() && tempLevel < this.tempLevel;
     }
 
@@ -38,6 +41,9 @@ public class IcecreamFreezingRecipe extends SpecialRecipe {
         return (int) ((1 - 0.12 * (tempLevel - this.tempLevel)) * ticks);
     }
 
+    public void consume(ItemStack itemStack) {
+        itemStack.shrink(ingredient.getCount());
+    }
     /**
      * 产生一个冰激凌桶，里面装上对应颜色的东西
      * @param inv

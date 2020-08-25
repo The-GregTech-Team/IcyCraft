@@ -34,8 +34,7 @@ public class ItemIceCream extends Item {
      * 存储在ingredients nbt里面
      * 格式是dict
      * test command:
-     * give Dev icycream:ice_cream_basic{"maxComponent":4, "ingredients":{"BODY_BROWN":0, "COCO":20,"MILK":40}} 1
-     * give Dev icycream:ice_cream_complex{"maxComponent":6, "ingredients":{"BODY_YELLOW":0, "COCO":20,"MILK":40, "VANILLA":40, "APPLE":80}} 1
+     * give Dev icycream:ice_cream_complex{"handle":"COCO","ingredients":{"BODY_YELLOW":0, "COCO":20,"HONEY":40, "VANILLA":40, "APPLE":80}} 1
      * @param itemStack
      * @return
      */
@@ -66,25 +65,20 @@ public class ItemIceCream extends Item {
             return 0xFFFFFF;
         }
         CompoundNBT ingredients = tag.getCompound("ingredients");
-        int maxComponentsCount = tag.getInt("maxComponent");
+        String handle = tag.getString("handle");
         if(ingredients == null || ingredients.keySet().isEmpty()) {
             logger.debug("eating an empty icecream");
             return 0xFFFFFF;
         }
         Set<String> ingredientSet = ingredients.keySet();
         List<String> ingredientList = Lists.newArrayList(ingredientSet);
-        if(tintIndex < maxComponentsCount) {
-            if(tintIndex >= ingredientSet.size()) {
-                if(ingredientSet.size() > 0) {
-                    return Ingredient.valueOf(ingredientList.get(0)).getColor().getRGB();
-                } else {
-                    return 0xFFFFFF;
-                }
-            } else{
-                return Ingredient.valueOf(ingredientList.get(tintIndex)).getColor().getRGB();
-            }
-        } else {
+        if(tintIndex == 0) {
+            return Ingredient.valueOf(handle).getColor().getRGB();
+        } else if (tintIndex == 5) {
             return 0x000000;
+        }
+        else {
+            return Ingredient.valueOf(ingredientList.get(tintIndex - 1)).getColor().getRGB();
         }
     }
 

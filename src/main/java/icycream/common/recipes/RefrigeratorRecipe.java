@@ -1,5 +1,6 @@
 package icycream.common.recipes;
 
+import icycream.common.recipes.special.SpecialRecipes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
@@ -21,7 +22,7 @@ public class RefrigeratorRecipe extends ShapelessFluidRecipe {
     @Nonnull
     @Override
     public IRecipeSerializer<?> getSerializer() {
-        return ShapelessFluidRecipeSerializer.FREEZING;
+        return SpecialRecipes.CRAFTING_SPECIAL_ICECREAM_FREEZING;
     }
 
     @Nonnull

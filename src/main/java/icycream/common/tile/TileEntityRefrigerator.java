@@ -5,7 +5,7 @@ import icycream.common.fluid.FluidInventory;
 import icycream.common.gui.RefrigeratorContainer;
 import icycream.common.gui.ScalableIntArray;
 import icycream.common.recipes.RecipeTypes;
-import icycream.common.recipes.ShapelessFluidRecipe;
+import icycream.common.recipes.special.IcecreamFreezingRecipe;
 import icycream.common.registry.BlockRegistryHandler;
 import icycream.common.registry.ServerHandler;
 import icycream.common.util.RecipeManagerHelper;
@@ -35,7 +35,7 @@ import java.util.Map;
  */
 public class TileEntityRefrigerator extends AbstractTileEntityMachine {
 
-    protected Map<Integer, ShapelessFluidRecipe> outputs = new HashMap<>();
+    protected Map<Integer, IcecreamFreezingRecipe> outputs = new HashMap<>();
 
     /**
      * 温度
@@ -70,7 +70,7 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
                  */
                 super.setInventorySlotContents(index, stack);
                 if (index < 9 && world != null && outputs.get(index) != null) {
-                    ShapelessFluidRecipe shapelessFluidRecipe = checkInventoryForRecipe(index);
+                    IcecreamFreezingRecipe shapelessFluidRecipe = checkInventoryForRecipe(index);
                     outputs.put(index,  shapelessFluidRecipe);
                 }
             }
@@ -124,17 +124,17 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
      *
      * @return 是否有合成对应机器物品栏
      */
-    protected ShapelessFluidRecipe checkInventoryForRecipe(int index) {
+    protected IcecreamFreezingRecipe checkInventoryForRecipe(int index) {
         IInventory inventory = new Inventory(1) {
             {
                 setInventorySlotContents(0, inventoryItemInput.getStackInSlot(index));
             }
         };
-        FluidInventory nullFluid = new FluidInventory(0,0);
-        for (ShapelessFluidRecipe shapelessFluidRecipe : RecipeManagerHelper.getRecipes(recipeType, ServerHandler.getServerInstance().getRecipeManager()).values()) {
-            if (shapelessFluidRecipe.matches(inventory, nullFluid)) {
-                setProgressMax(index, shapelessFluidRecipe.ticks);
-                return shapelessFluidRecipe;
+        for (Object recipe : RecipeManagerHelper.getRecipes(recipeType, ServerHandler.getServerInstance().getRecipeManager()).values()) {
+            IcecreamFreezingRecipe freezingRecipe = (IcecreamFreezingRecipe) recipe;
+            if (freezingRecipe.matches(inventory, temperature)) {
+                setProgressMax(index, freezingRecipe.getTicks(temperature));
+                return freezingRecipe;
             }
         }
         return null;
@@ -152,12 +152,12 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
                  * 9个格子一一对应每个格子都可以处理配方
                  */
                 for (int i = 0; i < 9; i++) {
-                    ShapelessFluidRecipe currentRecipe = outputs.get(i);
+                    IcecreamFreezingRecipe currentRecipe = outputs.get(i);
                     if (currentRecipe != null) {
                         if (isProcessingFinished(i)) {
                             //处理完成
                             //GT式吞材料
-                            ItemStack itemResult = currentRecipe.output;
+                            ItemStack itemResult = currentRecipe.getRecipeOutput();
                             if (itemResult != ItemStack.EMPTY) {
                                 ItemStack stackInSlot = inventoryItemOutput.getStackInSlot(i);
                                 if (!stackInSlot.isEmpty()) {
@@ -175,7 +175,7 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
                         } else if (getProgress(i) == 0) {
                             // 合成开始
                             // 吞材料
-                            currentRecipe.consume(inventoryItemInput, fluidInventoryInput);
+                            currentRecipe.consume(inventoryItemInput.getStackInSlot(i));
 
                             incrementProgress(i);
                         } else {

@@ -3,12 +3,6 @@ package icycream.common.registry;
 import icycream.IcyCream;
 import icycream.common.fluid.FluidIngredient;
 import icycream.common.item.Ingredient;
-<<<<<<< HEAD
-import net.minecraft.block.Block;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.block.material.Material;
-=======
->>>>>>> master
 import net.minecraft.fluid.Fluid;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;

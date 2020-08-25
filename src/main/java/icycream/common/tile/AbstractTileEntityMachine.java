@@ -8,9 +8,11 @@ import icycream.common.registry.ServerHandler;
 import icycream.common.util.RecipeManagerHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -78,7 +80,7 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
     protected FluidInventory fluidInventoryOutput;
 
     @Nonnull
-    protected IRecipeType<? extends ShapelessFluidRecipe> recipeType;
+    protected IRecipeType recipeType;
 
     public AbstractTileEntityMachine(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
@@ -161,7 +163,8 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
      * @return 是否有合成对应机器物品栏
      */
     protected ShapelessFluidRecipe checkInventoryForRecipe() {
-        for (ShapelessFluidRecipe shapelessFluidRecipe : RecipeManagerHelper.getRecipes(recipeType, ServerHandler.getServerInstance().getRecipeManager()).values()) {
+        for (Object recipe : RecipeManagerHelper.getRecipes(recipeType, ServerHandler.getServerInstance().getRecipeManager()).values()) {
+            ShapelessFluidRecipe shapelessFluidRecipe = (ShapelessFluidRecipe) recipe;
             if (shapelessFluidRecipe.matches(inventoryItemInput, fluidInventoryInput)) {
                 setMaxTicks(shapelessFluidRecipe.ticks);
                 return shapelessFluidRecipe;
