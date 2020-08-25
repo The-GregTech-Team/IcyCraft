@@ -1,6 +1,7 @@
 package icycream.common.recipes;
 
 import icycream.IcyCream;
+import icycream.common.recipes.special.IcecreamFreezingRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 
 public interface RecipeTypes {
@@ -8,6 +9,6 @@ public interface RecipeTypes {
     IRecipeType<MixerRecipe> MIXING = IRecipeType.register(IcyCreamRecipeUid.MIXING.toString());
     IRecipeType<MaceratorRecipe> MACERATING = IRecipeType.register(IcyCreamRecipeUid.MACERATING.toString());
     IRecipeType<ExtractorRecipe> EXTRACTING = IRecipeType.register(IcyCreamRecipeUid.EXTRACTING.toString());
-    IRecipeType<RefrigeratorRecipe> FREEZING = IRecipeType.register(IcyCreamRecipeUid.FREEZING.toString());
+    IRecipeType<IcecreamFreezingRecipe> FREEZING = IRecipeType.register(IcyCreamRecipeUid.FREEZING.toString());
 
 }

@@ -26,14 +26,12 @@ public class ShapelessFluidRecipeSerializer extends ForgeRegistryEntry<IRecipeSe
     public static ShapelessFluidRecipeSerializer MIXING;
     public static ShapelessFluidRecipeSerializer EXTRACTING;
     public static ShapelessFluidRecipeSerializer MACERATING;
-    public static ShapelessFluidRecipeSerializer FREEZING;
 
     public static void register() {
         INSTANCE = new ShapelessFluidRecipeSerializer("shapeless_fluid_recipe");
         MIXING = new ShapelessFluidRecipeSerializer("mixing");
         EXTRACTING = new ShapelessFluidRecipeSerializer("extracting");
         MACERATING = new ShapelessFluidRecipeSerializer("macerating");
-        FREEZING = new ShapelessFluidRecipeSerializer("freezing");
 
     }
 
@@ -67,8 +65,6 @@ public class ShapelessFluidRecipeSerializer extends ForgeRegistryEntry<IRecipeSe
         switch (json.get("type").getAsString()) {
             case "icycream:mixing":
                 return new MixerRecipe(recipeId, ingredients, fluidStacks, output, outputFluid, ticks);
-            case "icycream:freezing":
-                return new RefrigeratorRecipe(recipeId, ingredients, fluidStacks, output, outputFluid, ticks);
             case "icycream:extracting":
                 return new ExtractorRecipe(recipeId, ingredients, fluidStacks, output, outputFluid, ticks);
             case "icycream:macerating":

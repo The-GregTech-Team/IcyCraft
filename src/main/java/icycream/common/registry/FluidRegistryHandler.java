@@ -2,6 +2,7 @@ package icycream.common.registry;
 
 import icycream.IcyCream;
 import icycream.common.fluid.FluidIngredient;
+import icycream.common.item.Ingredient;
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
@@ -24,6 +25,8 @@ public class FluidRegistryHandler {
     @SubscribeEvent
     public static void registerFluids(RegistryEvent.Register<Fluid> event) throws IllegalAccessException, NoSuchFieldException, ClassNotFoundException {
        registerFluid("fluid_egg", new Color(0xffb800));
+       registerFluid("fluid_apple_juice", Ingredient.APPLE);
+       registerFluid("");
     }
 
     /**
@@ -49,6 +52,28 @@ public class FluidRegistryHandler {
         Util.unfreezeRegistry(Registry.ITEM);
         Registry.ITEM.register(new ResourceLocation(IcyCream.MODID,name + "_bucket"), bucketItem);
         Util.freezeRegistry(Registry.ITEM);
+         */
+
+    }
+
+    private static void registerFluid(String name, Ingredient ingredient) {
+        FluidIngredient.Source source = new FluidIngredient.Source(ingredient, name);
+        FluidIngredient.Flowing flowing = new FluidIngredient.Flowing(ingredient, name);
+        Registry.FLUID.register(new ResourceLocation(IcyCream.MODID, name), source);
+        Registry.FLUID.register(new ResourceLocation(IcyCream.MODID, name + "_flowing"), flowing);
+        /**
+         *
+         BucketItem bucketItem = new BucketItem(source, (new Item.Properties()).containerItem(BUCKET).maxStackSize(1).group(ItemGroup.MISC));
+         Util.unfreezeRegistry(Registry.BLOCK);
+         FlowingFluidBlock sourceFluidBlock = new FlowingFluidBlock(() -> source, Block.Properties.create(Material.WATER).
+         doesNotBlockMovement().
+         hardnessAndResistance(100.0F).
+         noDrops());
+         Registry.BLOCK.register(new ResourceLocation(IcyCream.MODID, "block_liquid_" + name), sourceFluidBlock);
+         Util.freezeRegistry(Registry.BLOCK);
+         Util.unfreezeRegistry(Registry.ITEM);
+         Registry.ITEM.register(new ResourceLocation(IcyCream.MODID,name + "_bucket"), bucketItem);
+         Util.freezeRegistry(Registry.ITEM);
          */
 
     }

@@ -2,6 +2,7 @@ package icycream.common.fluid;
 
 import com.google.common.collect.Maps;
 import icycream.IcyCream;
+import icycream.common.item.Ingredient;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.FlowingFluidBlock;
@@ -35,6 +36,8 @@ public abstract class FluidIngredient extends WaterFluid {
     protected Tag<Fluid> tag; // = new FluidTags.Wrapper(new ResourceLocation("icycream:fluid_ingredient"));
 
     protected String name;
+
+    protected Ingredient ingredient;
 
     protected static Map<String, Source> SRCS = Maps.newHashMap();
 
@@ -91,10 +94,22 @@ public abstract class FluidIngredient extends WaterFluid {
         return Registry.BLOCK.getOrDefault(new ResourceLocation(IcyCream.MODID, "block_liquid_" + name)).getDefaultState().with(FlowingFluidBlock.LEVEL, Integer.valueOf(getLevelFromState(state)));
     }
 
+    public Ingredient getIngredient() {
+        return ingredient;
+    }
+
     public static class Source extends FluidIngredient {
 
         public Source(Color color, String name) {
             this.color = color;
+            this.tag = new FluidTags.Wrapper(new ResourceLocation(IcyCream.MODID, name));
+            this.name = name;
+            SRCS.put(name, this);
+        }
+
+        public Source(Ingredient ingredient, String name) {
+            this.color = ingredient.getColor();
+            this.ingredient = ingredient;
             this.tag = new FluidTags.Wrapper(new ResourceLocation(IcyCream.MODID, name));
             this.name = name;
             SRCS.put(name, this);
@@ -118,6 +133,15 @@ public abstract class FluidIngredient extends WaterFluid {
             this.name = name;
             FLOWINGS.put(name, this);
         }
+
+        public Flowing(Ingredient ingredient, String name) {
+            this.color = ingredient.getColor();
+            this.ingredient = ingredient;
+            this.tag = new FluidTags.Wrapper(new ResourceLocation(IcyCream.MODID, name + "_flowing"));
+            this.name = name;
+            FLOWINGS.put(name, this);
+        }
+
 
         @Override
         protected void fillStateContainer(StateContainer.Builder<Fluid, IFluidState> builder) {
