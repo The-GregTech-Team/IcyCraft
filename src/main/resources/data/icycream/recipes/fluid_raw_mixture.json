@@ -1,0 +1,23 @@
+{
+  "type": "icycream:mixing",
+  "ticks": 600,
+  "ingredients": [
+    {
+      "item": "icycream:flour"
+    }
+  ],
+  "inputFluids": [
+    {
+      "fluid":"minecraft:milk",
+      "amount": 900
+    },
+    {
+      "fluid":"icycream:oil",
+      "amount": 100
+    }
+  ],
+  "outputFluid": {
+    "fluid": "icycream:fluid_raw_mixture",
+    "amount": 1000
+  }
+}

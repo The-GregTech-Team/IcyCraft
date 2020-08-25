@@ -1,0 +1,13 @@
+{
+  "type": "icycream:macerating",
+  "ticks": 200,
+  "ingredients": [
+    {
+      "item": "minecraft:sugar_cane"
+    }
+  ],
+  "result": {
+    "item": "minecraft:sugar",
+    "count": 4
+  }
+}

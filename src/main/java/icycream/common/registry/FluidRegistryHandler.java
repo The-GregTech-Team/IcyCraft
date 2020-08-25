@@ -3,13 +3,13 @@ package icycream.common.registry;
 import icycream.IcyCream;
 import icycream.common.fluid.FluidIngredient;
 import icycream.common.item.Ingredient;
+<<<<<<< HEAD
 import net.minecraft.block.Block;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
+=======
+>>>>>>> master
 import net.minecraft.fluid.Fluid;
-import net.minecraft.item.BucketItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraftforge.event.RegistryEvent;
@@ -18,15 +18,29 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.awt.*;
 
-import static net.minecraft.item.Items.BUCKET;
-
 @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
 public class FluidRegistryHandler {
     @SubscribeEvent
     public static void registerFluids(RegistryEvent.Register<Fluid> event) throws IllegalAccessException, NoSuchFieldException, ClassNotFoundException {
        registerFluid("fluid_egg", new Color(0xffb800));
+       registerFluid("fluid_oil", new Color(0xb5d000));
+       registerFluid("fluid_sweet_berries_juice", Ingredient.BERRY);
        registerFluid("fluid_apple_juice", Ingredient.APPLE);
-       registerFluid("");
+       registerFluid("fluid_carrot_juice", Ingredient.CARROT);
+       registerFluid("fluid_pumpkin_juice", Ingredient.PUMPKIN);
+       registerFluid("fluid_melon_juice", Ingredient.MELON);
+
+       registerFluid("fluid_raw_mixture", new Color(0xddefdd));
+       registerFluid("fluid_honey_mixture", Ingredient.HONEY);
+       registerFluid("fluid_sweet_berries_mixture", Ingredient.BERRY);
+       registerFluid("fluid_apple_mixture", Ingredient.APPLE);
+       registerFluid("fluid_carrot_mixture", Ingredient.CARROT);
+       registerFluid("fluid_pumpkin_mixture", Ingredient.PUMPKIN);
+       registerFluid("fluid_melon_mixture", Ingredient.MELON);
+       registerFluid("fluid_vanilla_mixture", Ingredient.VANILLA);
+       registerFluid("fluid_coco_mixture", Ingredient.COCO);
+       registerFluid("fluid_purpur_mixture", Ingredient.PURPUR);
+       registerFluid("fluid_puffer_mixture", Ingredient.PUFFER_FISH);
     }
 
     /**

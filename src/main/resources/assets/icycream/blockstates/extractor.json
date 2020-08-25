@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "running=0": {
+      "model": "icycream:block/extractor_idle"
+    },
+    "running=1": {
+      "model": "icycream:block/extractor_running"
+    }
+  }
+}
