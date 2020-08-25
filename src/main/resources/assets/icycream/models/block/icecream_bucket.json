@@ -1,0 +1,38 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "side": "icycream:block/icecream_bucket_side",
+    "top": "icycream:block/icecream_bucket_top",
+    "bottom": "icycream:block/icecream_bucket_bottom"
+  },
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#bottom",
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#top",
+          "cullface": "up"
+        },
+        "east": {
+          "texture": "#side",
+          "cullface": "east"
+        },
+        "west": {
+          "texture": "#side",
+          "cullface": "west"
+        },
+        "north": {
+          "texture": "#side",
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#side",
+          "cullface": "south"
+        }
+      }
+    }
+  ]
+}

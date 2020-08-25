@@ -52,6 +52,7 @@ public class BlockRegistryHandler {
         refrigerator =  registerTile("refridgerator", block, TileEntityRefrigerator.class);
         block = registerBlocksWithItem(new BlockMacerator(Block.Properties.create(Material.IRON).hardnessAndResistance(6, 30)), "macerator");
         macerator = registerTile("macerator", block, TileEntityMacerator.class);
+        registerBlocksWithItem(new Block(Block.Properties.create(Material.IRON).hardnessAndResistance(6, 30)), "icecream_bucket");
     }
 
     public static Block registerBlocksWithItem(Block block, String name) {
