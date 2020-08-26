@@ -15,6 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -22,8 +23,6 @@ import java.util.Set;
 public class ItemIceCream extends Item {
 
     protected Logger logger = LogManager.getLogger();
-
-    private static List empty = Collections.unmodifiableList(Lists.newArrayList());
 
     public ItemIceCream(Properties p_i48487_1_) {
         super(p_i48487_1_);
@@ -34,29 +33,25 @@ public class ItemIceCream extends Item {
      * 存储在ingredients nbt里面
      * 格式是dict
      * test command:
-     * give Dev icycream:ice_cream_complex{"handle":"COCO","ingredients":{"BODY_YELLOW":0, "COCO":20,"HONEY":40, "VANILLA":40, "APPLE":80}} 1
+     * give Dev icycream:ice_cream_complex{"ingredient":"COCO,APPLE,HONEY,PURPUR"} 1
      * @param itemStack
      * @return
      */
     private List<EffectInstance> getEffectFromNBT(ItemStack itemStack) {
-        CompoundNBT ingredients = itemStack.getTag().getCompound("ingredients");
-        if(ingredients == null || ingredients.keySet().isEmpty()) {
-            logger.debug("eating an empty icecream");
-            return empty;
-        }
-        else {
-            List<EffectInstance> effectInstances = Lists.newArrayList();
-            for (String ingredient : ingredients.keySet()) {
-                for (Effect effect : Ingredient.valueOf(ingredient).getPotionEffect()) {
+        String ingredients = itemStack.getTag().getString("ingredients");
+        ArrayList<EffectInstance> effectInstances = Lists.newArrayList();
+        for (String ingredient : ingredients.split(",")) {
+            Ingredient ingredientEnum = Ingredient.valueOf(ingredient);
+            if(ingredient != null) {
+                for (Effect effect : ingredientEnum.getPotionEffect()) {
                     /**
                      * 初版，直接按照里面的数值来确定效果持续时间
                      */
-                    logger.debug("got effect {} , duration = {}", effect.getName(), ingredients.getInt(ingredient));
-                    effectInstances.add(new EffectInstance(effect, ingredients.getInt(ingredient)));
+                    effectInstances.add(new EffectInstance(effect, ingredientEnum.getDurationTicks()));
                 }
             }
-            return effectInstances;
         }
+        return effectInstances;
     }
 
     private int getColorFromNBT(int tintIndex, ItemStack itemStack) {
