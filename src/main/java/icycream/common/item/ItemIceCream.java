@@ -33,7 +33,7 @@ public class ItemIceCream extends Item {
      * 存储在ingredients nbt里面
      * 格式是dict
      * test command:
-     * give Dev icycream:ice_cream_complex{"ingredient":"COCO,APPLE,HONEY,PURPUR"} 1
+     * give Dev icycream:ice_cream_complex{"handle":"COCO","ingredients":"COCO,APPLE,HONEY,PURPUR"} 1
      * @param itemStack
      * @return
      */
@@ -59,21 +59,20 @@ public class ItemIceCream extends Item {
         if(tag == null) {
             return 0xFFFFFF;
         }
-        CompoundNBT ingredients = tag.getCompound("ingredients");
+        String ingredients = tag.getString("ingredients");
         String handle = tag.getString("handle");
-        if(ingredients == null || ingredients.keySet().isEmpty()) {
+        if(ingredients.length() <= 0) {
             logger.debug("eating an empty icecream");
             return 0xFFFFFF;
         }
-        Set<String> ingredientSet = ingredients.keySet();
-        List<String> ingredientList = Lists.newArrayList(ingredientSet);
+        String[] ingredientList = ingredients.split(",");
         if(tintIndex == 0) {
             return Ingredient.valueOf(handle).getColor().getRGB();
         } else if (tintIndex == 5) {
             return 0x000000;
         }
         else {
-            return Ingredient.valueOf(ingredientList.get(tintIndex - 1)).getColor().getRGB();
+            return Ingredient.valueOf(ingredientList[tintIndex - 1]).getColor().getRGB();
         }
     }
 
