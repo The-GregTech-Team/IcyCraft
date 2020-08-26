@@ -2,6 +2,8 @@ package icycream.common.registry;
 
 import icycream.IcyCream;
 import icycream.common.item.ItemIceCream;
+import icycream.common.item.ItemIceCreamBall;
+import icycream.common.item.ItemSpoon;
 import icycream.common.util.RecipeManagerHelper;
 import net.minecraft.item.*;
 import net.minecraftforge.event.RegistryEvent;
@@ -54,22 +56,19 @@ public class ItemRegistryHandler {
 
         //冰激凌勺子
         event.getRegistry().register(
-                new Item(new Item.Properties()).setRegistryName(IcyCream.MODID, "spoon")
+                new ItemSpoon(new Item.Properties().group(itemGroup)).setRegistryName(IcyCream.MODID, "spoon")
         );
 
         //冰激凌蛋筒
         event.getRegistry().register(
-                new Item(new Item.Properties()).setRegistryName(IcyCream.MODID, "icecream_handle")
-        );
-
-        //装满冰激凌的筒
-        event.getRegistry().register(
-                new Item(new Item.Properties()).setRegistryName(IcyCream.MODID, "icecream_bucket")
+                new Item(new Item.Properties().group(itemGroup).food(new Food.Builder().hunger(4).setAlwaysEdible().build())).setRegistryName(IcyCream.MODID, "icecream_handle")
         );
 
         //冰激凌球
         event.getRegistry().register(
-                new Item(new Item.Properties()).setRegistryName(IcyCream.MODID, "icecream_ball")
+                new ItemIceCreamBall(new Item.Properties().group(itemGroup)
+                        .food(new Food.Builder().hunger(1).setAlwaysEdible().build())
+                ).setRegistryName(IcyCream.MODID, "icecream_ball")
         );
 
         RecipeManagerHelper.loadRecipes();

@@ -1,16 +1,11 @@
 package icycream.common.registry;
 
 import icycream.IcyCream;
-import icycream.common.block.BlockExtractor;
-import icycream.common.block.BlockMacerator;
-import icycream.common.block.BlockMixer;
-import icycream.common.block.BlockRefrigerator;
-import icycream.common.tile.TileEntityExtractor;
-import icycream.common.tile.TileEntityMacerator;
-import icycream.common.tile.TileEntityMixer;
-import icycream.common.tile.TileEntityRefrigerator;
+import icycream.common.block.*;
+import icycream.common.tile.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -30,6 +25,8 @@ public class BlockRegistryHandler {
     public static TileEntityType<TileEntityMacerator> macerator;
 
     public static TileEntityType<TileEntityRefrigerator> refrigerator;
+
+    public static TileEntityType<TileEntityIcecreamBucket> bucket;
 
     private static final DeferredRegister<Block> BLOCKS = new DeferredRegister<>(ForgeRegistries.BLOCKS, IcyCream.MODID);
     private static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, IcyCream.MODID);
@@ -52,7 +49,9 @@ public class BlockRegistryHandler {
         refrigerator =  registerTile("refridgerator", block, TileEntityRefrigerator.class);
         block = registerBlocksWithItem(new BlockMacerator(Block.Properties.create(Material.IRON).hardnessAndResistance(6, 30)), "macerator");
         macerator = registerTile("macerator", block, TileEntityMacerator.class);
-        registerBlocksWithItem(new Block(Block.Properties.create(Material.IRON).hardnessAndResistance(6, 30)), "icecream_bucket");
+        //        //装满冰激凌的筒
+        Block icecream_bucket = registerBlocksWithItem(new BlockIcecreamBucket(Block.Properties.create(Material.IRON).hardnessAndResistance(6, 30)), "icecream_bucket");
+        bucket = registerTile("icecream_bucket", icecream_bucket, TileEntityIcecreamBucket.class);
     }
 
     public static Block registerBlocksWithItem(Block block, String name) {
