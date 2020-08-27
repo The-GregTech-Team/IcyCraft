@@ -1,0 +1,13 @@
+{
+  "block.icycream.extractor":"榨汁姬",
+  "block.icycream.mixer":"搅拌机",
+  "block.icycream.refrigerator":"冰箱",
+  "block.icycream.macerator":"研磨机",
+  "block.icycream.icecream_bucket":"装满冰激凌的桶",
+  "item.icycream.ice_cream_complex":"四色冰激凌筒",
+  "item.icycream.cocoa_powder":"可可粉",
+  "item.icycream.spoon":"冰激凌勺",
+  "item.icycream.icecream_handle":"蛋筒",
+  "item.icycream.icecream_ball":"冰激凌球",
+  "itemGroup.icycream":"冰激凌-夏日清凉"
+}

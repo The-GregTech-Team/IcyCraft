@@ -9,6 +9,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import org.junit.Before;
 
+import java.util.concurrent.Semaphore;
+
 
 public class TestIngredientAndRecipe {
 
