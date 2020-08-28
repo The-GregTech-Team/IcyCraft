@@ -38,13 +38,13 @@ public class ColorRegistryHandler {
         event.getItemColors().register((itemStack, tintIndex) -> cocoa_powder_color.getRGB(), cocoa_powder);
         event.getItemColors().register((itemStack, tintIndex) -> {
             if(tintIndex == 1)
-                return itemStack.getTag() == null ? Ingredient.BERRY.getColor().getRGB() : Ingredient.valueOf(itemStack.getTag().getString("ingredient")).getColor().getRGB();
+                return itemStack.getTag() == null ? Ingredient.DEFAULT.getColor().getRGB() : Ingredient.valueOf(itemStack.getTag().getString("ingredient")).getColor().getRGB();
             else
-                return 0xffffff;
+                return Ingredient.DEFAULT.getColor().getRGB();
         }, item_bucket_ice_cream);
         event.getItemColors().register(
                 (itemStack, tintIndex) ->
-                        itemStack.getTag() == null ? Ingredient.COCO.getColor().getRGB() : Ingredient.valueOf(itemStack.getTag().getString("ingredient")).getColor().getRGB(),
+                        itemStack.getTag() == null ? Ingredient.DEFAULT.getColor().getRGB() : Ingredient.valueOf(itemStack.getTag().getString("ingredient")).getColor().getRGB(),
                 item_cream_ball, item_icecream_handle);
     }
 

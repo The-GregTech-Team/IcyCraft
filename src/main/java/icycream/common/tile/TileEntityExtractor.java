@@ -23,7 +23,7 @@ public class TileEntityExtractor extends AbstractTileEntityMachine
             @Override
             public void setInventorySlotContents(int index, ItemStack stack) {
                 super.setInventorySlotContents(index, stack);
-                if(currentRecipe == null && world != null) {
+                if(currentRecipe == null && world != null && !world.isRemote) {
                     currentRecipe = checkInventoryForRecipe();
                 }
             }

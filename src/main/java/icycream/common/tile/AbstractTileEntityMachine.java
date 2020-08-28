@@ -185,7 +185,9 @@ public abstract class AbstractTileEntityMachine extends TileEntity implements IT
             }
         }
         readLiquidFromCompoundNBT(compound);
-        currentRecipe = (ShapelessFluidRecipe) ServerHandler.getServerInstance().getRecipeManager().getRecipe(new ResourceLocation(compound.getString("recipe"))).orElse(null);
+        if (!world.isRemote) {
+            currentRecipe = (ShapelessFluidRecipe) ServerHandler.getServerInstance().getRecipeManager().getRecipe(new ResourceLocation(compound.getString("recipe"))).orElse(null);
+        }
         progress.set(0, compound.getInt("progress"));
         super.read(compound);
     }

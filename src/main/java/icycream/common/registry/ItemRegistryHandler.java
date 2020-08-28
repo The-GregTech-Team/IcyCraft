@@ -4,8 +4,11 @@ import icycream.IcyCream;
 import icycream.common.item.ItemIceCream;
 import icycream.common.item.ItemIceCreamBall;
 import icycream.common.item.ItemSpoon;
+import icycream.common.recipes.ShapelessFluidRecipeSerializer;
+import icycream.common.recipes.special.SpecialRecipes;
 import icycream.common.util.RecipeManagerHelper;
 import net.minecraft.item.*;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
@@ -69,11 +72,14 @@ public class ItemRegistryHandler {
                         .food(new Food.Builder().hunger(1).setAlwaysEdible().build())
                 ).setRegistryName(IcyCream.MODID, "icecream_ball")
         );
-
-        RecipeManagerHelper.loadRecipes();
     }
 
-    private static void registerLiquidBucket() {
-
+    @SubscribeEvent
+    public static void registerRecipeSerializer(RegistryEvent.Register<IRecipeSerializer<?>> registryEvent) {
+        RecipeManagerHelper.loadRecipes();
+        registryEvent.getRegistry().register(ShapelessFluidRecipeSerializer.EXTRACTING);
+        registryEvent.getRegistry().register(ShapelessFluidRecipeSerializer.MIXING);
+        registryEvent.getRegistry().register(ShapelessFluidRecipeSerializer.MACERATING);
+        SpecialRecipes.registerAll();
     }
 }

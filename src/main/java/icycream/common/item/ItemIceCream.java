@@ -1,6 +1,9 @@
 package icycream.common.item;
 
 import com.google.common.collect.Lists;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -9,15 +12,19 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 public class ItemIceCream extends Item {
 
@@ -37,7 +44,7 @@ public class ItemIceCream extends Item {
      * @return
      */
     private List<EffectInstance> getEffectFromNBT(ItemStack itemStack) {
-        String ingredients = itemStack.getTag().getString("ingredients");
+        String ingredients = itemStack.getTag() != null ? itemStack.getTag().getString("ingredients") : "DEFAULT";
         ArrayList<EffectInstance> effectInstances = Lists.newArrayList();
         for (String ingredient : ingredients.split(",")) {
             Ingredient ingredientEnum = Ingredient.valueOf(ingredient);
@@ -53,6 +60,7 @@ public class ItemIceCream extends Item {
         return effectInstances;
     }
 
+    @OnlyIn(Dist.CLIENT)
     private int getColorFromNBT(int tintIndex, ItemStack itemStack) {
         CompoundNBT tag = itemStack.getTag();
         if(tag == null) {
@@ -72,6 +80,34 @@ public class ItemIceCream extends Item {
         }
         else {
             return Ingredient.valueOf(ingredientList[tintIndex - 1]).getColor().getRGB();
+        }
+    }
+
+    /**
+     * allows items to add custom lines of information to the mouseover description
+     *
+     * @param stack
+     * @param worldIn
+     * @param tooltip
+     * @param flagIn
+     */
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        super.addInformation(stack, worldIn, tooltip, flagIn);
+        String ingredients = null;
+        if (stack.getTag() != null) {
+            ingredients = stack.getTag().getString("ingredients");
+        }
+        else {
+            ingredients = "DEFAULT";
+        }
+        tooltip.add(new TranslationTextComponent("tooltip.foodlist"));
+        for (String ingredient : ingredients.split(",")) {
+            Ingredient ingredientEnum = Ingredient.valueOf(ingredient);
+            tooltip.add(new TranslationTextComponent(ingredientEnum.getEffectName()));
+            for (Effect effect : ingredientEnum.getPotionEffect()) {
+                tooltip.add(new StringTextComponent(effect.getDisplayName().getFormattedText() + ":" + ingredientEnum.getDurationTicks() / 20.0 + "s"));
+            }
         }
     }
 

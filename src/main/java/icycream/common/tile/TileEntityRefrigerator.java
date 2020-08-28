@@ -69,7 +69,7 @@ public class TileEntityRefrigerator extends AbstractTileEntityMachine {
                  * world is null on loading phase
                  */
                 super.setInventorySlotContents(index, stack);
-                if (index < 9 && world != null && outputs.get(index) != null) {
+                if (index < 9 && world != null && !world.isRemote && outputs.get(index) != null) {
                     IcecreamFreezingRecipe shapelessFluidRecipe = checkInventoryForRecipe(index);
                     outputs.put(index,  shapelessFluidRecipe);
                 }

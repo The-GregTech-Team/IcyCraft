@@ -1,6 +1,7 @@
 package icycream.common.item;
 
 import com.google.common.collect.Lists;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -8,8 +9,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +22,21 @@ public class ItemIceCreamBall extends Item {
         super(properties);
     }
 
+
+    /**
+     * allows items to add custom lines of information to the mouseover description
+     *
+     * @param stack
+     * @param worldIn
+     * @param tooltip
+     * @param flagIn
+     */
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+        String ingredient = stack.getTag() != null ? stack.getTag().getString("ingredient") : "DEFAULT";
+        Ingredient ingredientEnum = Ingredient.valueOf(ingredient);
+        tooltip.add(new TranslationTextComponent(ingredientEnum.getEffectName()));
+    }
 
     /**
      * 根据nbt(原料配比)获取药水(buff)
@@ -29,16 +48,14 @@ public class ItemIceCreamBall extends Item {
      * @return
      */
     private List<EffectInstance> getEffectFromNBT(ItemStack itemStack) {
-        String ingredient = itemStack.getTag().getString("ingredient");
+        String ingredient = itemStack.getTag() != null ? itemStack.getTag().getString("ingredient") : "DEFAULT";
         ArrayList<EffectInstance> effectInstances = Lists.newArrayList();
         Ingredient ingredientEnum = Ingredient.valueOf(ingredient);
-        if(ingredient != null) {
-            for (Effect effect : ingredientEnum.getPotionEffect()) {
-                /**
-                 * 初版，直接按照里面的数值来确定效果持续时间
-                 */
-                effectInstances.add(new EffectInstance(effect, 20));
-            }
+        for (Effect effect : ingredientEnum.getPotionEffect()) {
+            /**
+             * 初版，直接按照里面的数值来确定效果持续时间
+             */
+            effectInstances.add(new EffectInstance(effect, 20));
         }
         return effectInstances;
     }

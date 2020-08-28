@@ -1,5 +1,6 @@
 package icycream.client.color;
 
+import icycream.common.item.Ingredient;
 import icycream.common.tile.TileEntityIcecreamBucket;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.color.IBlockColor;
@@ -11,14 +12,14 @@ import javax.annotation.Nullable;
 public class IcecreamBucketTinter implements IBlockColor {
     @Override
     public int getColor(BlockState state, @Nullable ILightReader lightReader, @Nullable BlockPos blockPos, int tintIndex) {
-        if(tintIndex == 0) {
-            return 0xFFFFFF;
+         if(tintIndex == 0) {
+            return Ingredient.DEFAULT.getColor().getRGB();
         } else {
             if(blockPos != null) {
                 TileEntityIcecreamBucket tileEntity = (TileEntityIcecreamBucket) lightReader.getTileEntity(blockPos);
-                return tileEntity.getIngredient() != null ? tileEntity.getIngredient().getColor().getRGB() : 0xFFFFFF;
+                return tileEntity.getIngredient() != null ? tileEntity.getIngredient().getColor().getRGB() : Ingredient.DEFAULT.getColor().getRGB();
             } else {
-                return 0xFFFFFF;
+                return Ingredient.DEFAULT.getColor().getRGB();
             }
         }
     }

@@ -38,10 +38,12 @@ public class BlockIcecreamBucket extends Block implements ITileEntityProvider {
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-        TileEntityIcecreamBucket tileEntity = (TileEntityIcecreamBucket) worldIn.getTileEntity(pos);
-        tileEntity.setIngredient(Ingredient.valueOf(stack.getTag().getString("ingredient")));
-        tileEntity.setCount(64);
-        worldIn.notifyBlockUpdate(pos, state, state, 2);
+        if(!worldIn.isRemote) {
+            TileEntityIcecreamBucket tileEntity = (TileEntityIcecreamBucket) worldIn.getTileEntity(pos);
+            tileEntity.setIngredient(Ingredient.valueOf(stack.getTag() != null ? stack.getTag().getString("ingredient") : "DEFAULT"));
+            tileEntity.setCount(64);
+            worldIn.notifyBlockUpdate(pos, state, state, 2);
+        }
     }
 
     @Nullable

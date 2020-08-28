@@ -2,18 +2,25 @@ package icycream.common.tile;
 
 import icycream.common.item.Ingredient;
 import icycream.common.registry.BlockRegistryHandler;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.math.BlockPos;
+
+import javax.annotation.Nullable;
 
 public class TileEntityIcecreamBucket extends TileEntity {
     private int count = 0;
 
-    private Ingredient ingredient;
+    private Ingredient ingredient = Ingredient.DEFAULT;
 
     public TileEntityIcecreamBucket() {
         super(BlockRegistryHandler.bucket);
     }
+
     public TileEntityIcecreamBucket(TileEntityType<?> tileEntityTypeIn) {
         super(tileEntityTypeIn);
     }
@@ -44,9 +51,40 @@ public class TileEntityIcecreamBucket extends TileEntity {
     @Override
     public CompoundNBT getUpdateTag() {
         CompoundNBT updateTag = super.getUpdateTag();
-        updateTag.putString("ingredient",ingredient.name());
+        updateTag.putString("ingredient", ingredient.name());
         return updateTag;
     }
+
+    /**
+     * Retrieves packet to send to the client whenever this Tile Entity is resynced via World.notifyBlockUpdate. For
+     * modded TE's, this packet comes back to you clientside in {@link #onDataPacket}
+     */
+    @Nullable
+    @Override
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        CompoundNBT updateTag = super.getUpdateTag();
+        updateTag.putString("ingredient", ingredient.name());
+        SUpdateTileEntityPacket sUpdateTileEntityPacket = new SUpdateTileEntityPacket(getPos(), 0, updateTag);
+        return sUpdateTileEntityPacket;
+    }
+
+    /**
+     * Called when you receive a TileEntityData packet for the location this
+     * TileEntity is currently in. On the client, the NetworkManager will always
+     * be the remote server. On the server, it will be whomever is responsible for
+     * sending the packet.
+     *
+     * @param net The NetworkManager the packet originated from
+     * @param pkt The data packet
+     */
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        CompoundNBT tag = pkt.getNbtCompound();
+        ingredient = Ingredient.valueOf(tag.getString("ingredient"));
+        BlockState blockState = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, blockState, blockState, 2);
+    }
+
 
     @Override
     public CompoundNBT write(CompoundNBT compound) {

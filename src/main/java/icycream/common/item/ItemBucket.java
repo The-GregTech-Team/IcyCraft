@@ -18,6 +18,7 @@ public class ItemBucket extends Item {
     public ItemBucket(Properties properties) {
         super(properties);
     }
+    @OnlyIn(Dist.CLIENT)
     private int getColorFromNBT(ItemStack itemStack) {
         CompoundNBT tag = itemStack.getTag();
         if(tag == null) {
