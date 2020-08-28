@@ -41,8 +41,11 @@
   "ingredient.berry_luck":"甜莓口味",
   "ingredient.purpur_slow_fall":"紫松口味",
   "ingredient.puffer_fish_poison":"河豚口味",
-  "tooltip.foodlist": "口味列表"
-
-
-
+  "tooltip.foodlist": "口味列表",
+  "tooltip.extractor": "从水果中榨取汁液!",
+  "tooltip.macerator": "磨咖啡！",
+  "tooltip.refrigerator": "制作冰激凌的最后一步！",
+  "tooltip.mixer": "打碎鸡蛋，将果汁和冰激凌原浆混到一起！",
+  "tooltip.spoon": "从装满冰激凌的桶里面挖一块下来",
+  "tooltip.icecream_bucket": "桶装的冰激凌"
 }
